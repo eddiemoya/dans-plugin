@@ -86,10 +86,17 @@ class OpenID_RPX {
 			var_dump($guid);
 			exit;*/
 			
+			/*echo $guid->id;
+			exit;*/
+			
 				if(isset($guid->code) && $guid->code == '404') {
 					
+					/*var_dump($this->user);
+					exit;*/
 					//User not found, create new SSO Profile user
 					$guid = $this->_sso_profile->create($this->user);
+					
+					
 					
 					return ($this->map($guid->id)) ? $this->user : false;
 					
@@ -97,6 +104,7 @@ class OpenID_RPX {
 					
 					//Map SSO GUID to user
 					return ($this->map($guid->id)) ? $this->user : false;
+					
 				}
 				
 		} else {
@@ -129,10 +137,10 @@ class OpenID_RPX {
 						 ->set_query('apiKey', $this->_api_key)
 						 ->set_query('identifier', $this->user['openid_id'])
 						 ->set_query('primaryKey', $guid)
-						 ->set_query('overwrite', 'true')
+						 ->set_query('overwrite', 'false')
 						 ->execute();
 						 
-			 /*echo '<pre>';
+			/* echo '<pre>';
 			 var_dump($response);
 			 exit;*/
 						 

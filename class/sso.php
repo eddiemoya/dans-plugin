@@ -11,7 +11,7 @@ class SSO {
 								'qa'			=> 'https://phoenix.ecom.sears.com:1443/shccas/');
 	
 	/**
-	 * Selected environment for request. Plugin option used to set this - 
+	 * Selected environment for request. Plugin option used to set thielseifs - 
 	 * defaults to production.
 	 * 
 	 * @var string
@@ -110,6 +110,7 @@ class SSO {
 	 * @var object
 	 */
 	private $_sso_profile = null;
+	
 	
 	
 	/**
@@ -211,14 +212,8 @@ class SSO {
     janrain.settings.type = "embed";
     janrain.settings.appId = "lmnligghmdckfgnhpaih";
     janrain.settings.appUrl = "https://sears-qa.rpxnow.com";
-    janrain.settings.providers = [
-	"facebook",
-	"yahoo",
-	"google",
-	"aol",
-	"myspace",
-	"twitter"];
-    janrain.settings.providersPerPage = "6";
+    janrain.settings.providers = ["facebook","google","yahoo","twitter"];
+    janrain.settings.providersPerPage = "4";
     janrain.settings.format = "one row";
     janrain.settings.actionText = " ";
     janrain.settings.showAttribution = true;
@@ -226,8 +221,8 @@ class SSO {
     janrain.settings.fontFamily = "helvetica, sans-serif";
     janrain.settings.backgroundColor = "#FFFFFF";
     janrain.settings.width = "217";
-    janrain.settings.borderColor = "#CCCCCC";
-    janrain.settings.borderRadius = "5";    janrain.settings.buttonBorderColor = "#CCCCCC";
+    janrain.settings.borderColor = "#FFFFFF";
+    janrain.settings.borderRadius = "0";    janrain.settings.buttonBorderColor = "#CCCCCC";
     janrain.settings.buttonBorderRadius = "10";
     janrain.settings.buttonBackgroundStyle = "gradient";
     janrain.settings.language = "en";
@@ -289,21 +284,25 @@ class SSO {
 		
 		//Check if there was an error, if so redirect to default login page
 		if($error = $this->get_login_error()) {
-				
+	
 			$this->error_redirect($error);
-		}		
+		}
+
 		
 		
 		//Login form post 
 		if(! isset($_POST['ticket']) && isset($_GET['ssologin'])) {
 			
+			
+			
 			$this->_callback = $this->get_current_url();
 			
 			$this->login($_POST['loginId'], $_POST['logonPassword'])
-				->redirect();
-				
-				
-		} elseif (isset($_POST['ticket']) && ! isset($_GET['ssologincheck'])) { //Login response with ticket, validate ticket ..
+				->redirect();	
+		} 
+
+		//Login Response ticket
+		if(isset($_POST['ticket']) && ! isset($_GET['ssologincheck'])) { //Login response with ticket, validate ticket ..
 			
 			try {
 				
@@ -311,6 +310,9 @@ class SSO {
 				exit;*/
 				$xml = $this->validate($_POST['ticket'])
 							->execute();
+							
+				/*echo $xml;
+				exit;*/
 							
 			} catch(Exception $e) {
 				
@@ -325,19 +327,15 @@ class SSO {
 						
 					} catch(Exception $e) {
 						
-						/*echo '<pre>';
-						var_dump($e);*/
-						$this->error_redirect($e->message);
+						echo '<pre>';
+						var_dump($e);
+						exit;
+						
+						$this->error_redirect('New User Creation failed.');
 					}
 						
 				}
 				
-				/*TEST*/
-				if(isset($_GET['ticket']) || isset($_GET['errorCode'])) {
-				
-				$xml = $this->validate($_GET['ticket'])
-							->execute();
-				}
 				
 				//Register
 				if(! isset($_POST['ticket']) && isset($_GET['ssoregister'])) {
@@ -378,7 +376,7 @@ class SSO {
 							
 							/*echo '<pre>';
 							var_dump($e);*/
-							$this->error_redirect($e->message);
+							//$this->error_redirect($e->message);
 						}
 					
 							//User Login
@@ -390,9 +388,9 @@ class SSO {
 								
 							} catch(Exception $e) {
 								
-								/*echo '<pre>';
-								var_dump($e);*/
-								$this->error_redirect($e->message);
+								echo '<pre>';
+								var_dump($e);
+								//$this->error_redirect($e->message);
 							}
 						
 					} else {
@@ -405,6 +403,9 @@ class SSO {
 				
 				//OpenID Auth request
 				if(isset($_GET['openid_auth']) && isset($_POST['token']) && ! isset($_POST['ticket'])) {
+
+					/*echo $_POST['token'];
+					exit;*/
 					
 					if($user = $this->_openid_rpx->auth_info($_POST['token'])) {
 						
@@ -416,7 +417,7 @@ class SSO {
 						$this->_callback = $this->get_current_url();
 						
 						$this->login_openid(urlencode($user['email']))
-							 ->execute();
+							 ->openid_execute();
 							
 					} else {
 						
@@ -472,9 +473,6 @@ class SSO {
 			$this->error_redirect('Please enter a username and password.');
 		}
 		
-		
-		
-		
 		//Set query params and action
 		$this->set_query('loginId', $username)
 			->set_query('logonPassword', $password)
@@ -495,16 +493,16 @@ class SSO {
 		
 		$this->set_query('loginId', $username)
 			 ->set_query('ts', $this->_sso_profile->timestamp)
-	 		 ->set_query('sourceSiteid', $this->_sid)
+	 		 ->set_query('sourceSiteId', $this->_sid)
 	 		 ->set_query('renew', 'false')
 	 		 ->set_query('gateway', 'true')
 	 		 ->set_query('service', urlencode($this->get_callback()))
-	 		 ->set_query('sig', $this->_sso_profile->digital_signature)
+	 		 ->set_query('sig', urlencode($this->_sso_profile->digital_signature))
 	 		 ->set_method('POST')
 	 		 ->set_action(__METHOD__);
 	 		 
 	 		 
-	 		 /*echo $this->create_openid_url();
+	 		/* echo $this->create_openid_url();
 	 		 exit;*/
 	 		 
 	 		return $this;
@@ -521,6 +519,9 @@ class SSO {
 	private function redirect() {
 		
 		$url = $this->create_url();
+		
+		/*echo $url;
+		exit;*/
 		
 		
 		header('Refferer: ' . $this->get_current_url());
@@ -617,10 +618,13 @@ class SSO {
 	 * @access private
 	 */
 	function register($username, $password, $zipcode) {
-		
-		if((! $username || empty($username)) || (! $password || empty($password)) || (! $zipcode || empty($zipcode))) {
+		/*echo 'Username: ' . $username . '<br>';
+		echo 'Password: ' . $password . '<br>';
+		echo 'Zipcode: '  . $zipcode . '<br>';
+		exit;*/
+		if(empty($username) || empty($password) || empty($zipcode)) {
 			
-			$this->error_redirect('Please enter a username, password and zipcode.');
+			$this->error_redirect('Please enter a username, password and zipcode.TEST');
 		}
 		
 			$this->set_query('sourceSiteid', $this->_sid)
@@ -629,6 +633,10 @@ class SSO {
 				 ->set_query('logonPassword', $password)
 				 ->set_query('zipcode', $zipcode)
 				 ->set_action(__METHOD__);
+				 
+				 /*echo '<pre>';
+				 var_dump($this->_query);
+				 exit;*/
 				 
 			 return $this;
 	}
@@ -680,6 +688,9 @@ class SSO {
 	
 		if(isset($_POST['errorCode']) && ! empty($_POST['errorCode'])) {
 			
+			/*echo 'Got an error: '. $_POST['errorCode'];
+			exit;*/
+			
 			if($this->_login_page == '') die('No Login page configured.');
 			
 			return $sso_errors[$_POST['errorCode']];
@@ -729,10 +740,19 @@ class SSO {
             
             $user = $xml->children('http://www.yale.edu/tp/cas');
             
+           /*echo '<pre>';
+            var_dump($user);
+            exit;*/
+            
             
             $email = $user->authenticationSuccess->user;
             $sso_guid = $user->authenticationSuccess->attributes->guid;
           	$username = $email;//preg_replace('/@.*?$/', '', $email);
+          	
+          	/*echo 'E-mail: ' . $email . '<br>';
+          	echo 'GUID: ' . $sso_guid . '<br>';
+          	echo 'Username: ' . $username;
+          	exit;*/
           	
           	//If user does NOT exist, create account
 		 	if(! $user_id = $this->get_user_by_guid($sso_guid)) {
@@ -744,10 +764,14 @@ class SSO {
 		 			'user_login'	=> $username,
 		 			'user_role'		=> $this->_default_role));
 		 		
+		 		/*echo '<pre>';
+		 		var_dump($user_id);
+		 		exit;*/
+		 		
 						//Check for errors	 
 		 				if(is_wp_error($user_id)) {
 		 					
-		 					throw new Exception('New user creation failed.'); 
+		 					$this->error_redirect('The username you requested already exists on this site.');
 		 				}
 		 				
 	 				//Insert sso_guid user meta
@@ -873,7 +897,7 @@ class SSO {
      */
 	private function execute() {
 		
-		$url = ($this->_action == 'shcOpenIdLogin') ? $this->create_openid_url() : $this->create_url();
+		$url = $this->create_url();
 		
 		/*echo $url;
 		exit;*/
@@ -887,7 +911,7 @@ class SSO {
             CURLOPT_USERAGENT       => $_SERVER['HTTP_USER_AGENT'],
         );
 	        
-	        if($this->_method = 'POST') {
+	        if($this->_method == 'POST') {
 	        	
 	        	$options[CURLOPT_HTTPHEADER] = array('Content-type: application/x-www-form-urlencoded',
 	        											'Content-length: 0');
@@ -902,14 +926,14 @@ class SSO {
         
        
         
-       /* echo '<pre>';
+        /*echo '<pre>';
         var_dump($response);
         exit;*/
 
         // Get the response information
         $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         
-       /* echo $code;
+      /*echo $code;
         exit;*/
 
         if ( ! $response) {
@@ -923,12 +947,67 @@ class SSO {
             throw new Exception('Error fetching remote '.$url.' [ status '.$code.' ] '.$error);
         }
 
-     	
+        	/*if($this->_action != 'shcOpenIdLogin') {
+        		
+        		 return $response;
+        	}*/
         
         
-        //return $response;
+        return $response;
+	}
+
+	private function openid_execute() {
+		
+		$url = $this->create_openid_url();
+		
+		/*echo $url;
+		exit;*/
+		
+		$options = array(
+            CURLOPT_URL             => $url,
+            CURLOPT_RETURNTRANSFER  => TRUE,
+            CURLOPT_HEADER          => FALSE,
+            CURLOPT_SSL_VERIFYHOST  => 0,
+            CURLOPT_SSL_VERIFYPEER  => 0,
+            CURLOPT_USERAGENT       => $_SERVER['HTTP_USER_AGENT'],
+            CURLOPT_CUSTOMREQUEST 	=> 'POST',
+            CURLOPT_HTTPHEADER 		=> array('Content-type: application/x-www-form-urlencoded',
+	        											'Content-length: 0')
+	        
+        );
+	        
+	        
+	        
+        $ch = curl_init();
+
+        curl_setopt_array($ch, $options);
+
+        $response = curl_exec($ch);
         
-	}	
+       
+        
+        /*echo '<pre>';
+        var_dump($response);
+        exit;*/
+
+        // Get the response information
+        $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        
+      /*echo $code;
+        exit;*/
+
+        if ( ! $response) {
+            $error = curl_error($ch);
+        }
+
+        curl_close($ch);
+        
+         if (isset($error)) {
+         	
+            throw new Exception('Error fetching remote '.$url.' [ status '.$code.' ] '.$error);
+        }
+        
+	}
 	
 	/**
 	 * Given a URL and a querystring returns URL with querystring appended to URL. 

@@ -65,7 +65,8 @@ class SSO_Profile {
 				 			  'search' 			=> 'user/search/',
 							  'reset_password' 	=> 'user/reset/',
 							  'authorize_reset' => 'user/auth/',
-							  'change_password' => 'user/changepass/');
+							  'change_password' => 'user/changepass/',
+							  'create'			=> 'user/');
 	
 	/**
 	 * The key provided by CIS to use in creation of the digital signature.
@@ -80,7 +81,7 @@ class SSO_Profile {
 	 * The digital signature is a hash of 'sid=<sid>ts=<timestamp>'. 
 	 * It is only valid for 30 seconds from the timestamp used.
 	 * 
-	 * @var string
+wor	 * @var string
 	 */
 	
 	public $digital_signature;
@@ -496,12 +497,13 @@ class SSO_Profile {
 	        $this->to_xml($data, $xml);
         
 	       //return $xml->asXML();
-	       $ouput = $this->set_query('sid', $this->_sid)
+	       $output = $this->set_query('sid', $this->_sid)
 						->set_query('ts', $this->timestamp)
 						->set_query('sig', $this->digital_signature)
+						->set_query('openid', 'YES')
 						->set_post($xml->asXML())
 						->set_action(__METHOD__)
-						->set_method('POST')
+						->set_method('PUT')
 						->execute();
 						
 			$guid = $this->handle_response($output);
@@ -631,6 +633,9 @@ class SSO_Profile {
 		
 		$url = $this->create_url();
 		
+		
+		
+		
 		$options = array(
 			
             CURLOPT_RETURNTRANSFER  => TRUE,
@@ -641,7 +646,7 @@ class SSO_Profile {
             CURLOPT_USERAGENT       => $_SERVER['HTTP_USER_AGENT'],
             CURLOPT_CUSTOMREQUEST	=> $this->_method,
             CURLOPT_URL				=> $url,
-            CURLOPT_FOLLOWLOCATION	=> 0
+           // CURLOPT_FOLLOWLOCATION	=> 0
         );
         
         //If this is a POST set post data 
@@ -659,6 +664,11 @@ class SSO_Profile {
         			$options[CURLOPT_POSTFIELDS] = http_build_query($this->_post);
         			$options[CURLOPT_HTTPHEADER] = array('Content-type: application/x-www-form-urlencoded');
         		}
+        		
+        } elseif($this->_method == 'PUT') {//Use for create
+        	
+        	$options[CURLOPT_POSTFIELDS] = $this->_post;
+        	$options[CURLOPT_HTTPHEADER] = array('Content-Type: application/xml');
         }
         
         $ch = curl_init();
@@ -687,6 +697,11 @@ class SSO_Profile {
 	 * @access private
 	 */
 	private function handle_response($xml) {
+		
+		if($this->_method == 'PUT') {
+			var_dump($xml);
+			exit;
+		}
 		
 		 $xml = new SimpleXmlElement($xml);
          $user = $xml->children();
