@@ -220,7 +220,7 @@ wor	 * @var string
 				
 			} catch (Exception $e) {
 				
-				return array('error' => $e->message);
+				return array('error' => $e);
 			}
 			
 			//Package user attributes into array and return it.
