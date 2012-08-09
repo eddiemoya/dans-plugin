@@ -79,9 +79,9 @@ class SSO_Profile {
 	/**
 	 * The digital signature to use in the request to CIS.
 	 * The digital signature is a hash of 'sid=<sid>ts=<timestamp>'. 
-	 * It is only valid for 30 seconds from the timestamp used.
+	 * It is only valid for 30 seconds from the time timestamp is created.
 	 * 
-wor	 * @var string
+	 * @var string
 	 */
 	
 	public $digital_signature;
@@ -178,6 +178,7 @@ wor	 * @var string
 			$this->_sid = $options['profile_site_id'];
 			$this->_key = $options['profile_key'];
 			$this->login_page = get_permalink($options['sso_login_page_uri']);
+			$this->_reset_pwd_page = get_permalink($options['profile_pwd_reset_page']);
 		}
 	}
 
@@ -220,7 +221,7 @@ wor	 * @var string
 				
 			} catch (Exception $e) {
 				
-				return array('error' => $e);
+				return array('error' => $e->message);
 			}
 			
 			//Package user attributes into array and return it.
@@ -348,7 +349,7 @@ wor	 * @var string
 				
 			} catch (Exception $e) {
 				
-				return array('code' => '200', 'message' => $e->message);
+				return array('code' => '500', 'message' => 'There was an issue processing your request.');
 			}
 			
 				//There was an issue processing (bad/expired auth token; password doesn't meet min. requirement)

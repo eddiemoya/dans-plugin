@@ -2,6 +2,12 @@
 
 class OpenID_RPX {
 	
+	private $_endpoints = array('production'	=> 'https://rpxnow.com/api/v2/',
+								'qa'			=> 'https://rpxnow.com/api/v2/',
+								'integration'	=> 'https://rpxnow.com/api/v2/');
+	
+	private $_environment = 'production';
+	
 	private $_endpoint = 'https://rpxnow.com/api/v2/';
 	
 	private $_api_key = 'f6a74858c2c73195905a60579116293b9f5eb7fd';
@@ -32,6 +38,12 @@ class OpenID_RPX {
 	}
 	
 	public function __construct() {
+		
+		//Get and set Plugin options
+		$this->set_options();
+		
+		//Set endpoint to use based on environment option
+		$this->_endpoint = $this->_endpoints[$this->_environment];
 		
 		//Create and set new profile object
 		$this->_sso_profile = new SSO_Profile;
@@ -69,7 +81,7 @@ class OpenID_RPX {
 							
 				
 							
-			//If response OK, sets user property array
+			//If response OK, sets 'user' property (array)
 			//, else sends to login page with message				
 			$this->handle_auth_response($response);
 			
@@ -114,7 +126,20 @@ class OpenID_RPX {
 	}
 	
 	//Retrieve WP plugin options for openID
-	private function get_options() {
+	private function set_options() {
+		
+		$options = get_option(SHCSSO_OPTION_PREFIX . 'settings');
+		
+		if(is_array($options)){
+			
+			$this->_environment = $options['environment'];
+			
+				if(! empty($options['oid_api_key'])) {
+					
+					$this->_api_key = $options['oid_api_key'];
+					
+				}
+		}
 		
 	}
 	
