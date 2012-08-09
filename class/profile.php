@@ -313,7 +313,7 @@ class SSO_Profile {
 					
 				} catch (Exception $e) {
 					
-					return array('code' => '200', 'message' => $e->message);
+					return array('code' => '500', 'message' => 'There was an issue processing your request. Please try again.');
 				}
 					
 					require_once SHCSSO_CONFIG_DIR . 'errors.php';
@@ -358,7 +358,7 @@ class SSO_Profile {
 					//include error file
 					require_once SHCSSO_CONFIG_DIR . 'errors.php';
 					
-					return array('code' => $user->code, 'message' => $sso_errors[$user->code]);
+					return array('code' => (string) $user->code, 'message' => $sso_errors[(string) $user->code]);
 				}
 				
 					return array('code' => '200', 'message' => 'Your password has been successfully changed.');
@@ -699,10 +699,10 @@ class SSO_Profile {
 	 */
 	private function handle_response($xml) {
 		
-		if($this->_method == 'PUT') {
+		/*if($this->_method == 'PUT') {
 			var_dump($xml);
 			exit;
-		}
+		}*/
 		
 		 $xml = new SimpleXmlElement($xml);
          $user = $xml->children();

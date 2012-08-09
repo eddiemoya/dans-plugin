@@ -195,7 +195,7 @@ class SSO {
 	public function add_sso_forms() {
 		
 		$origin = $this->get_current_url();
-		$sso_vars = '<script type="text/javascript">var OID = ['. json_encode(array('token_url' => $this->_openid_rpx->token_url)) .'];</script>';
+		$sso_vars = '<script type="text/javascript">var OID = '. json_encode(array('token_url' => $this->_openid_rpx->token_url)) .';</script>';
 		/*$sso_forms = '<script type="text/javascript">var sso = [' .json_encode(array('sso_loginform' => '<form method="post" action="?ssologin&origin=' . urlencode($origin) . '"><label for="loginId">Username</label>
 						<input type="text" name="loginId" /><label for="logonPassword">Password</label>
 						<input type="password" name="logonPassword" /><input type="submit" name="submit" value="Login" class="btn" /></form>',
