@@ -984,8 +984,6 @@ class SSO {
 
         $response = curl_exec($ch);
         
-       
-        
         /*echo '<pre>';
         var_dump($response);
         exit;*/
@@ -1001,11 +999,16 @@ class SSO {
         }
 
         curl_close($ch);
-        
+        	
          if (isset($error)) {
          	
             throw new Exception('Error fetching remote '.$url.' [ status '.$code.' ] '.$error);
         }
+        
+        
+        //IMPORTANT: Must echo response!!!
+       echo $response;
+       exit;
         
 	}
 	

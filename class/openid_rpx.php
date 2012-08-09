@@ -55,6 +55,9 @@ class OpenID_RPX {
 	
 	public function auth_info($token = null) {
 		
+		/*var_dump($token);
+		exit;*/
+		
 		if($token && strlen($token) == 40) {
 			
 			$response = $this->set_action(__METHOD__)
@@ -64,6 +67,8 @@ class OpenID_RPX {
 									 	'format'		=> 'json',
 									 	'extended'		=> 'true'))
 							->execute();
+							
+							
 
 				/*echo 'Token: ' . $token . '<br>';
 				echo 'Endpoint: ' . $this->_endpoint . '<br>';
@@ -108,6 +113,9 @@ class OpenID_RPX {
 					//User not found, create new SSO Profile user
 					$guid = $this->_sso_profile->create($this->user);
 					
+					/*var_dump($guid);
+					exit;*/
+					
 					
 					
 					return ($this->map($guid->id)) ? $this->user : false;
@@ -115,7 +123,8 @@ class OpenID_RPX {
 				} else { //SSO user exists
 					
 					//Map SSO GUID to user
-					return ($this->map($guid->id)) ? $this->user : false;
+					//return ($this->map($guid->id)) ? $this->user : false;
+					return $this->user;
 					
 				}
 				
@@ -165,7 +174,7 @@ class OpenID_RPX {
 						 ->set_query('overwrite', 'false')
 						 ->execute();
 						 
-			/* echo '<pre>';
+			/*echo '<pre>';
 			 var_dump($response);
 			 exit;*/
 						 
