@@ -1,6 +1,6 @@
 <?php 
 
-return array(
+$sso_errors = array(
     '401'        => "Unauthorized Request",
     '404'        => "Resource Not Found",
     '500'        => "System Error",

@@ -21,7 +21,7 @@ Author: Dan Crimmins & Brian Greenacre
 if ( ! defined('SHCSSO_VERSION'))
 {
     define('SHCSSO_VERSION', '0.1.0');
-    define('SHCSSO_PATH', WP_PLUGIN_DIR . '/SHC-SSO-Login/');
+    define('SHCSSO_PATH', WP_PLUGIN_DIR . '/shc-sso-profile/');
     define('SHCSSO_CONFIG_DIR', SHCSSO_PATH . 'config/');
     define('SHCSSO_CLASS_DIR', SHCSSO_PATH . 'class/');
     define('SHCSSO_FILE', SHCSSO_PATH . pathinfo(__FILE__, PATHINFO_BASENAME));
