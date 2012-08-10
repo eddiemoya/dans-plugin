@@ -105,7 +105,7 @@ class SSO {
 	 */
 	private $_openid_rpx = null;
 	
-	/**create_url
+	/**
 	 * Holds an instance of SSO_Profile object
 	 * @var object
 	 */

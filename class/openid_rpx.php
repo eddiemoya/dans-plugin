@@ -68,24 +68,11 @@ class OpenID_RPX {
 									 	'extended'		=> 'true'))
 							->execute();
 							
-							
-
-				/*echo 'Token: ' . $token . '<br>';
-				echo 'Endpoint: ' . $this->_endpoint . '<br>';
-				echo 'API key: ' . $this->_api_key . '<br>';
-				echo 'Action: ' . $this->_action . '<br>';
-				echo 'Method: ' . $this->_method . '<br>';
-				echo 'URL: ' . $this->create_url() . '<br>';
-				exit;*/
-							
-				
 				
 				/*echo '<pre>';		
 				var_dump($response);
 				exit;*/
-							
-				
-							
+										
 			//If response OK, sets 'user' property (array)
 			//, else sends to login page with message				
 			$this->handle_auth_response($response);
