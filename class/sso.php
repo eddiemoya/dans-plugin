@@ -396,7 +396,7 @@ class SSO {
 					} else {
 						
 						setcookie('sso_checked', 'yes', 0);
-						header('Location: '. urldecode($_GET['origin']) . '?whatever');
+						header('Location: '. urldecode($_GET['origin']));
 					}
 					
 				} 
@@ -947,10 +947,6 @@ class SSO {
             throw new Exception('Error fetching remote '.$url.' [ status '.$code.' ] '.$error);
         }
 
-        	/*if($this->_action != 'shcOpenIdLogin') {
-        		
-        		 return $response;
-        	}*/
         
         
         return $response;
