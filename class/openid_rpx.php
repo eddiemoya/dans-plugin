@@ -48,7 +48,7 @@ class OpenID_RPX {
 		//Create and set new profile object
 		$this->_sso_profile = new SSO_Profile;
 		
-		$this->token_url = $this->url_append_qs('openid_auth&origin=' . urlencode($this->get_current_url()), $this->get_current_url());
+		$this->token_url = $this->url_append_qs('openid_auth&origin=' . urlencode(get_permalink(get_page_by_path('refresh'))), $this->get_current_url());
 		
 	}
 	
