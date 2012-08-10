@@ -684,7 +684,7 @@ class SSO {
 	 */
 	private function get_login_error() {
 		
-		require_once SHCSSO_CONFIG_DIR . 'errors.php';
+		include SHCSSO_CONFIG_DIR . 'errors.php';
 	
 		if(isset($_POST['errorCode']) && ! empty($_POST['errorCode'])) {
 			

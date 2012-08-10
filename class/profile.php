@@ -271,7 +271,7 @@ class SSO_Profile {
 				if(isset($user->code)) {
 					
 					//include error file
-					require_once SHCSSO_CONFIG_DIR . 'errors.php';
+					include SHCSSO_CONFIG_DIR . 'errors.php';
 					
 					return array('code' => $user->code, 'message' => $sso_errors[$user->code]);
 				}
@@ -316,7 +316,7 @@ class SSO_Profile {
 					return array('code' => '500', 'message' => 'There was an issue processing your request. Please try again.');
 				}
 					
-					require_once SHCSSO_CONFIG_DIR . 'errors.php';
+					include SHCSSO_CONFIG_DIR . 'errors.php';
 					
 					return array('code' => $user->code, 'message' => $sso_errors[$user->code]);
 		}
@@ -356,9 +356,12 @@ class SSO_Profile {
 				if(isset($user->code)) {
 					
 					//include error file
-					require_once SHCSSO_CONFIG_DIR . 'errors.php';
+					include SHCSSO_CONFIG_DIR . 'errors.php';
+				
 					
-					return array('code' => (string) $user->code, 'message' => $sso_errors[(string) $user->code]);
+					$code = (string) $user->code;
+					
+					return array('code' => $code, 'message' => $sso_errors[$code]);
 				}
 				
 					return array('code' => '200', 'message' => 'Your password has been successfully changed.');
