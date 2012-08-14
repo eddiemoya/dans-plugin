@@ -2,13 +2,14 @@
 
 class SSO_Admin {
 	
-	public static $options = array('environment'		=> 'production',
-									'profile_key'		=> 'YWCHJTDwxjHlZXro3NggLiWKu_I',
-									'profile_site_id'	=> 41,
-									'sso_site_id' 		=> 41,
-									'sso_role' 			=> 'Subscriber',
-									'sso_login_page_uri'=> '',
-									'oid_api_key'		=> 'f6a74858c2c73195905a60579116293b9f5eb7fd');
+	public static $options = array('environment'			=> 'production',
+									'profile_key'			=> 'YWCHJTDwxjHlZXro3NggLiWKu_I',
+									'profile_site_id'		=> 41,
+									'sso_site_id' 			=> 41,
+									'sso_role' 				=> 'Subscriber',
+									'sso_login_page_uri'	=> '',
+									'profile_pwd_reset_page'=> '',
+									'oid_api_key'			=> 'f6a74858c2c73195905a60579116293b9f5eb7fd');
 									
 	public static $environments = array('production' 	=> 'production',
 								 'integration'			=> 'integration',
