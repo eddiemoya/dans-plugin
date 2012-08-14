@@ -488,8 +488,6 @@ class SSO {
 		
 		$this->_sso_profile = new SSO_Profile;
 		
-		/*echo $this->get_callback();
-		exit;*/
 		
 		$this->set_query('loginId', $username)
 			 ->set_query('ts', $this->_sso_profile->timestamp)
@@ -624,7 +622,7 @@ class SSO {
 		exit;*/
 		if(empty($username) || empty($password) || empty($zipcode)) {
 			
-			$this->error_redirect('Please enter a username, password and zipcode.TEST');
+			$this->error_redirect('Please enter a username, password and zipcode.');
 		}
 		
 			$this->set_query('sourceSiteid', $this->_sid)
@@ -771,7 +769,7 @@ class SSO {
 						//Check for errors	 
 		 				if(is_wp_error($user_id)) {
 		 					
-		 					$this->error_redirect('The username you requested already exists on this site.');
+		 					$this->error_redirect('The username you requested already exists on this site. Please try another.');
 		 				}
 		 				
 	 				//Insert sso_guid user meta
@@ -781,6 +779,23 @@ class SSO {
 	 				}
 		 	} 
 		 	
+		 		
+		 		
+		 		//Check if user has a screen name set, if not check CIS and set user meta if found
+		 		if(! get_user_meta($user_id, 'profile_screen_name', true)) {
+		 			
+		 			//Check for CIS screen name, if there is one set user_nicename and user meta
+			 		if($screen_name = $this->get_screen_name($sso_guid)) {
+			 			
+			 			update_user_meta($user_id, 'profile_screen_name', $screen_name);
+			 			
+			 			//Set user_nicename to profile screen name
+			 			wp_insert_user(array('ID'				=> $user_id,
+			 								 'user_nicename' 	=> $screen_name));
+			 		}
+		 		}
+		 		
+		 		
 		 		//Login
 		 		wp_set_current_user($user_id, $username);
 		 		wp_set_auth_cookie($user_id);
@@ -791,11 +806,35 @@ class SSO {
 		 		header('Location: ' . urldecode($_GET['origin']));
 		 		
 		 		die; 	 
-	} else {
+		 		
+		} else {
+			
+			throw new Exception('Invalid response for SSO validate request.');
+		}
 		
-		throw new Exception('Invalid response for SSO validate request.');
 	}
+	
+	/**
+	 * Given an SSO GUID will return profile screen name if
+	 * user has one set, else returns false.
+	 * 
+	 * @param int $sso_guid
+	 * @return mixed - returns screen name or false
+	 * @access private
+	 */
+	private function get_screen_name($sso_guid) {
 		
+		$profile = new SSO_Profile;
+		
+		//Returns array of user profile data
+		$user_data = $profile->get($sso_guid);
+		
+		 if(isset($user_data['screenname']) && ! empty($user_data['screenname'])) {
+		 	
+		 	return (string) $user_data['screenname'];
+		 }
+		
+		 	return false;
 	}
 	
 	/**
@@ -986,25 +1025,23 @@ class SSO {
 
         // Get the response information
         $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        
-      /*echo $code;
-        exit;*/
+     
 
-        if ( ! $response) {
-            $error = curl_error($ch);
-        }
-
-        curl_close($ch);
-        	
-         if (isset($error)) {
-         	
-            throw new Exception('Error fetching remote '.$url.' [ status '.$code.' ] '.$error);
-        }
+	        if ( ! $response) {
+	            $error = curl_error($ch);
+	        }
+	
+	        curl_close($ch);
+	        	
+	         if (isset($error)) {
+	         	
+	            throw new Exception('Error fetching remote '.$url.' [ status '.$code.' ] '.$error);
+	        }
         
         
-        //IMPORTANT: Must echo response!!!
-       echo $response;
-       exit;
+	        //IMPORTANT: Must echo response!!!
+	       echo $response;
+	       exit;
         
 	}
 	

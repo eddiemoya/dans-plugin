@@ -221,14 +221,14 @@ class SSO_Profile {
 				
 			} catch (Exception $e) {
 				
-				return array('error' => $e->message);
+				return array('error' => 'An issue occured trying to retrieve data from CIS.');
 			}
 			
 			//Package user attributes into array and return it.
 			$profile = array('id'		=> $user->id,
 							'status'	=> $user->status,
 							'name'		=> isset($user->name->first) ? $user->name->first . ' ' . $user->name->last : null,
-							'sreenname'	=> isset($user->{'screen-names'}->{'screen-name'}->name) ? $user->{'screen-names'}->{'screen-name'}->name : null,
+							'screenname'	=> isset($user->{'screen-names'}->{'screen-name'}->name) ? $user->{'screen-names'}->{'screen-name'}->name : null,
 							'dob'		=> isset($user->birthdate) ? $user->birthdate : null,
 							'zipcode'	=> $user->zipcode,
 							'gender'	=> isset($user->gender) ? $user->gender : null,
@@ -368,8 +368,10 @@ class SSO_Profile {
 	} 
 	
 	/**
-	 * Probably won't be used.
-	 * @param unknown_type $email
+	 * Given an e-mail searches for user's profile data.
+	 * 
+	 * @param string $email
+	 * @return array - An array containing user profile data, or containing an 'error' element
 	 */
 	public function search($email) {
 		
@@ -388,12 +390,28 @@ class SSO_Profile {
 				
 				$user = $this->handle_response($xml);
 				
-				return $user;
+				//Check for error from CIS server
+				if(isset($user->code)) {
+					
+					return array('error' => $user->message);
+				}
 				
 			} catch(Exception $e) {
 				
-				return array('code' => '', 'message' => $e->message);
+				return array('code' => '', 'message' => 'There was an issue trying to retrieve data from CIS.');
 			}
+			
+			//Package user attributes into array and return it.
+			$profile = array('id'			=> $user->id,
+							'status'		=> $user->status,
+							'name'			=> isset($user->name->first) ? $user->name->first . ' ' . $user->name->last : null,
+							'screenname'	=> isset($user->{'screen-names'}->{'screen-name'}->name) ? $user->{'screen-names'}->{'screen-name'}->name : null,
+							'dob'			=> isset($user->birthdate) ? $user->birthdate : null,
+							'zipcode'		=> $user->zipcode,
+							'gender'		=> isset($user->gender) ? $user->gender : null,
+							'email'			=> isset($user->emails->email) ? $user->emails->email : null);
+			
+			return $profile;
 	}
 	
 	/**
