@@ -464,7 +464,7 @@ class SSO_Profile {
         //Set post as XML string
        // $this->set_post($xml->asXML());
         
-        $ouput = $this->set_query('sid', $this->_sid)
+        $xml = $this->set_query('sid', $this->_sid)
 					->set_query('ts', $this->timestamp)
 					->set_query('sig', $this->digital_signature)
 					->set_post($xml->asXML())
@@ -472,18 +472,26 @@ class SSO_Profile {
 					->set_method('POST')
 					->execute();
 					
-		try {
+					/*echo '<pre>';
+					var_dump($output);
+					exit;*/
 			
-			$this->handle_response($output);
-			
-			return true;
-			
-		} catch (Exception $e) {
-			
-			return false;
-			
-		}
+		$output = $this->handle_response($xml);
 		
+		if(isset($output->code)) {
+			
+			//include error file
+			include SHCSSO_CONFIG_DIR . 'errors.php';
+	
+			$code = (string) $output->code;
+			
+			return array('code' => $code, 'message' => $sso_errors[$code]);
+			
+		} else {
+			
+			return array('guid' => $output->id);
+		}
+			
 	}
 	
 	public function create($user) {
@@ -720,10 +728,6 @@ class SSO_Profile {
 	 */
 	private function handle_response($xml) {
 		
-		/*if($this->_method == 'PUT') {
-			var_dump($xml);
-			exit;
-		}*/
 		
 		 $xml = new SimpleXmlElement($xml);
          $user = $xml->children();
@@ -732,15 +736,7 @@ class SSO_Profile {
          var_dump($user);
          exit;*/
          
-         //Check if an error exists
-        /* if($error) {
-         	
-         	throw new Exception('There was an error');
-         }*/
-         //return data as array
-         
          return $user;
-		
 	}
 	
 	/**

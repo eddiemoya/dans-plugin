@@ -601,7 +601,7 @@ class SSO {
 		$refferer = $this->get_current_url();
 
         header('Refferer: ' . $refferer);
-        header('Location: ' . urldecode($_GET['origin'])); //!Remove loggedout qs param!
+        header('Location: ' . urldecode($_GET['origin'])); 
 
         exit;
 	}
