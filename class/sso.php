@@ -748,16 +748,16 @@ class SSO {
             $sso_guid = $user->authenticationSuccess->attributes->guid;
           	$username = $email;//preg_replace('/@.*?$/', '', $email);
           	
-          	/*echo 'E-mail: ' . $email . '<br>';
+          	echo 'E-mail: ' . $email . '<br>';
           	echo 'GUID: ' . $sso_guid . '<br>';
           	echo 'Username: ' . $username;
-          	exit;*/
+          	exit;
           	
           	//If user does NOT exist, create account
 		 	if(! $user_id = $this->get_user_by_guid($sso_guid)) {
 		 		
-		 		var_dump($user_id);
-		 		exit;
+		 		/*var_dump($user_id);
+		 		exit;*/
 		 		
 		 		//Create wp user
 		 		$user_id = wp_insert_user(array(
