@@ -756,6 +756,9 @@ class SSO {
           	//If user does NOT exist, create account
 		 	if(! $user_id = $this->get_user_by_guid($sso_guid)) {
 		 		
+		 		var_dump($user_id);
+		 		exit;
+		 		
 		 		//Create wp user
 		 		$user_id = wp_insert_user(array(
 	 				'user_pass'		=> $this->random(),
@@ -766,9 +769,6 @@ class SSO {
 		 		/*echo '<pre>';
 		 		var_dump($user_id);
 		 		exit;*/
-		 		
-		 		var_dump($user_id);
-		 		exit;
 		 		
 						//Check for errors	 
 		 				if(is_wp_error($user_id)) {
