@@ -714,10 +714,6 @@ class SSO {
 		$user_query = "SELECT user_id FROM " . $usermeta ." WHERE meta_key = 'sso_guid' AND meta_value = " . $sso_guid;
 	 	$user_id = $wpdb->get_var($user_query);
 	 	
-	 	/*echo $user_query;
-	 	exit;*/
-	 	
-	 	
 	 		return $user_id;
 		
 	}
@@ -770,6 +766,9 @@ class SSO {
 		 		/*echo '<pre>';
 		 		var_dump($user_id);
 		 		exit;*/
+		 		
+		 		var_dump($user_id);
+		 		exit;
 		 		
 						//Check for errors	 
 		 				if(is_wp_error($user_id)) {
