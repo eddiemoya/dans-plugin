@@ -714,8 +714,8 @@ class SSO {
 		$user_query = "SELECT user_id FROM " . $usermeta ." WHERE meta_key = 'sso_guid' AND meta_value = " . $sso_guid;
 	 	$user_id = $wpdb->get_var($user_query);
 	 	
-	 	echo $user_query;
-	 	exit;
+	 	/*echo $user_query;
+	 	exit;*/
 	 	
 	 	
 	 		return $user_id;
