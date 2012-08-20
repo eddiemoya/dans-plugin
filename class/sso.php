@@ -919,7 +919,7 @@ class SSO {
      */
     private function error_redirect($msg) {
     	
-    	header('Location: ' . $this->url_append_qs('error=' . urlencode($msg), $this->_login_page));
+    	header('Location: ' . $this->url_append_qs('err=' . urlencode($msg), $this->_login_page));
 		exit;
     }
     
