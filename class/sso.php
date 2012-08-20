@@ -709,7 +709,7 @@ class SSO {
 	private function get_user_by_guid($sso_guid) {
 		
 		global $wpdb;
-		$usermeta = $wpdb->prefix . 'usermeta';
+		$usermeta = $wpdb->base_prefix . 'usermeta';
 		
 		$user_query = "SELECT user_id FROM " . $usermeta ." WHERE meta_key = 'sso_guid' AND meta_value = " . $sso_guid;
 	 	$user_id = $wpdb->get_var($user_query);
