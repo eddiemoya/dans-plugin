@@ -8,12 +8,13 @@ class SSO_Admin {
 									'sso_site_id' 			=> 41,
 									'sso_role' 				=> 'Subscriber',
 									'sso_login_page_uri'	=> '',
+									'sso_reg_page_uri'		=> '',
 									'profile_pwd_reset_page'=> '',
 									'oid_api_key'			=> 'f6a74858c2c73195905a60579116293b9f5eb7fd');
 									
 	public static $environments = array('production' 	=> 'production',
-								 'integration'			=> 'integration',
-								 'qa'					=> 'qa');
+									 	'integration'			=> 'integration',
+										 'qa'					=> 'qa');
 	
 	public static function install() {
 		
@@ -68,6 +69,7 @@ class SSO_Admin {
         add_settings_field('sso_site_id', __('Source Site ID'), array(__CLASS__, 'sso_site_id'), 'shcsso-settings', SHCSSO_OPTION_PREFIX . 'sso_settings');
         add_settings_field('sso_role', __('User Role'), array(__CLASS__, 'sso_role'), 'shcsso-settings', SHCSSO_OPTION_PREFIX . 'sso_settings');
         add_settings_field('sso_login_page_uri', __('Login Page'), array(__CLASS__, 'sso_login_page_uri'), 'shcsso-settings', SHCSSO_OPTION_PREFIX . 'sso_settings');
+        add_settings_field('sso_reg_page_uri', __('Registration Page'), array(__CLASS__, 'sso_reg_page_uri'), 'shcsso-settings', SHCSSO_OPTION_PREFIX . 'sso_settings');
 		
         //Profile Section
         add_settings_section(SHCSSO_OPTION_PREFIX . 'profile_settings', __('Profile Settings'), array(__CLASS__, 'profile_section'), 'shcsso-settings');
@@ -137,6 +139,22 @@ class SSO_Admin {
     	$pages = get_pages();
     	?>
     		<select name="<?php echo htmlspecialchars(SHCSSO_OPTION_PREFIX . 'settings[sso_login_page_uri]', ENT_QUOTES);?>" id="sso_login_page_uri">
+    			<option value="" <?php if($uri == '') echo ' selected="selected"';?>>Select one...</option>
+    			<?php foreach($pages as $page):?>
+    				<option value="<?php echo $page->ID;?>"<?php echo ($page->ID == $uri) ? ' selected="selected"' : '';?>><?php echo get_permalink($page->ID);?></option>
+    			<?php endforeach;?>
+    		</select>
+    	<?php 
+    }
+    
+	public static function sso_reg_page_uri() {
+    	
+    	$options = get_option(SHCSSO_OPTION_PREFIX . 'settings');
+    	$uri = $options['sso_reg_page_uri'];
+    	
+    	$pages = get_pages();
+    	?>
+    		<select name="<?php echo htmlspecialchars(SHCSSO_OPTION_PREFIX . 'settings[sso_reg_page_uri]', ENT_QUOTES);?>" id="sso_reg_page_uri">
     			<option value="" <?php if($uri == '') echo ' selected="selected"';?>>Select one...</option>
     			<?php foreach($pages as $page):?>
     				<option value="<?php echo $page->ID;?>"<?php echo ($page->ID == $uri) ? ' selected="selected"' : '';?>><?php echo get_permalink($page->ID);?></option>

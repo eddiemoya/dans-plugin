@@ -50,6 +50,13 @@ class SSO {
 	private $_login_page = '';
 	
 	/**
+	 * The URL to the registration page on the site. Set via plugin option.
+	 * 
+	 * @var string
+	 */
+	private $_register_page = '';
+	
+	/**
 	 * An array containing querystring parameters used in request.
 	 * Set by set_query()
 	 * 
@@ -182,6 +189,7 @@ class SSO {
 			$this->_sid = $options['sso_site_id'];
 			$this->_default_role = $options['sso_role'];
 			$this->_login_page = get_permalink($options['sso_login_page_uri']);
+			$this->_register_page = get_permalink($options['sso_reg_page_uri']);
 		}
 	}
 	
@@ -285,7 +293,15 @@ class SSO {
 		//Check if there was an error, if so redirect to default login page
 		if($error = $this->get_login_error()) {
 	
-			$this->error_redirect($error);
+			if(isset($_GET['ssoreg'])) {
+				
+				$this->error_register_redirect($error);
+				
+			} else {
+				
+				$this->error_redirect($error);
+			
+			}
 		}
 
 		
@@ -306,8 +322,6 @@ class SSO {
 			
 			try {
 				
-				/*echo 'Got ticket';
-				exit;*/
 				$xml = $this->validate($_POST['ticket'])
 							->execute();
 							
@@ -340,7 +354,7 @@ class SSO {
 				//Register
 				if(! isset($_POST['ticket']) && isset($_GET['ssoregister'])) {
 					
-					$this->_callback = $this->get_current_url();
+					$this->_callback = $this->url_append_qs('ssoreg', $this->get_current_url());
 					
 					$this->register($_POST['loginId'], $_POST['logonPassword'], $_POST['zipcode'])
 						 ->redirect();
@@ -404,8 +418,6 @@ class SSO {
 				//OpenID Auth request
 				if(isset($_GET['openid_auth']) && isset($_POST['token']) && ! isset($_POST['ticket'])) {
 
-					/*echo $_POST['token'];
-					exit;*/
 					
 					if($user = $this->_openid_rpx->auth_info($_POST['token'])) {
 						
@@ -921,6 +933,12 @@ class SSO {
     private function error_redirect($msg) {
     	
     	header('Location: ' . $this->url_append_qs('err=' . urlencode($msg), $this->_login_page));
+		exit;
+    }
+    
+	private function error_register_redirect($msg) {
+    	
+    	header('Location: ' . $this->url_append_qs('err=' . urlencode($msg), $this->_register_page));
 		exit;
     }
     
