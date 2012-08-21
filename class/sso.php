@@ -680,6 +680,7 @@ class SSO {
 	 * error
 	 * @access private
 	 */
+	
 	private function get_login_error() {
 		
 		include SHCSSO_CONFIG_DIR . 'errors.php';
