@@ -304,12 +304,8 @@ class SSO {
 			}
 		}
 
-		
-		
 		//Login form post 
 		if(! isset($_POST['ticket']) && isset($_GET['ssologin'])) {
-			
-			
 			
 			$this->_callback = $this->get_current_url();
 			
@@ -341,9 +337,9 @@ class SSO {
 						
 					} catch(Exception $e) {
 						
-						echo '<pre>';
+						/*echo '<pre>';
 						var_dump($e);
-						exit;
+						exit;*/
 						
 						$this->error_redirect('New User Creation failed.');
 					}
@@ -807,8 +803,9 @@ class SSO {
 			 			update_user_meta($user_id, 'profile_screen_name', $screen_name);
 			 			
 			 			//Set user_nicename to profile screen name
-			 			wp_insert_user(array('ID'				=> $user_id,
-			 								 'user_nicename' 	=> $screen_name));
+			 			/*wp_insert_user(array('ID'				=> $user_id,
+			 								 'user_nicename' 	=> $screen_name));*/
+			 			$this->update_user_nicename($user_id, $screen_name);
 			 		}
 		 		}
 		 		
@@ -817,7 +814,8 @@ class SSO {
 		 		wp_set_current_user($user_id, $username);
 		 		wp_set_auth_cookie($user_id);
 		 		do_action('wp_login', $username);
-		 	
+		 		
+		 		
           		//Redirect
 		 		header('Refferer: ' . $this->get_current_url());
 		 		header('Location: ' . urldecode($_GET['origin']));
@@ -932,13 +930,13 @@ class SSO {
      */
     private function error_redirect($msg) {
     	
-    	header('Location: ' . $this->url_append_qs('err=' . urlencode($msg), $this->_login_page));
+    	header('Location: ' . $this->url_append_qs('err=' . urlencode($msg) . '&origin=' . $_GET['origin'], $this->_login_page));
 		exit;
     }
     
 	private function error_register_redirect($msg) {
     	
-    	header('Location: ' . $this->url_append_qs('err=' . urlencode($msg), $this->_register_page));
+    	header('Location: ' . $this->url_append_qs('err=' . urlencode($msg) . '&origin=' . $_GET['origin'], $this->_register_page));
 		exit;
     }
     
@@ -1144,5 +1142,17 @@ class SSO {
 		}
 		
 		return rtrim($qs, '&');
+	}
+	
+	private function update_user_nicename($uid, $name) {
+	
+		global $wpdb;
+		$user = $wpdb->base_prefix . 'users';
+	
+		$update = $wpdb->update($user, 
+								array('user_nicename' => $name),
+								array('ID' => $uid));
+						
+		return ($update) ? true : false;
 	}
 }
