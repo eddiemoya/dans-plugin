@@ -90,13 +90,8 @@ class OpenID_RPX {
 			var_dump($guid);
 			exit;*/
 			
-			/*echo $guid->id;
-			exit;*/
-			
-				if(isset($guid->code) && $guid->code == '404') {
-					
-					/*var_dump($this->user);
-					exit;*/
+				if(isset($guid['code']) && $guid['code'] == '404') {
+				
 					//User not found, create new SSO Profile user
 					$guid = $this->_sso_profile->create($this->user);
 					
@@ -303,7 +298,7 @@ class OpenID_RPX {
 	
 	private function redirect_to_login($msg) {
 		
-		header('Location: ' . $this->url_append_qs('error=' . urlencode($msg), $this->_sso_profile->login_page));
+		header('Location: ' . $this->url_append_qs('error=' . urlencode($msg) . '&origin=' . $_GET['origin'], $this->_sso_profile->login_page));
 		exit;
 	}
 	

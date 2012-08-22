@@ -292,6 +292,9 @@ class SSO {
 		
 		//Check if there was an error, if so redirect to default login page
 		if($error = $this->get_login_error()) {
+			
+			/*echo 'Got error.';
+			exit;*/
 	
 			if(isset($_GET['ssoreg'])) {
 				
@@ -508,7 +511,7 @@ class SSO {
 	 		 ->set_action(__METHOD__);
 	 		 
 	 		 
-	 		/* echo $this->create_openid_url();
+	 		/*echo $this->create_openid_url();
 	 		 exit;*/
 	 		 
 	 		return $this;
@@ -1040,7 +1043,7 @@ class SSO {
 
         $response = curl_exec($ch);
         
-        /*echo '<pre>';
+       /* echo '<pre>';
         var_dump($response);
         exit;*/
 
@@ -1143,6 +1146,14 @@ class SSO {
 		
 		return rtrim($qs, '&');
 	}
+	
+	/**
+	 * Updates user's user_nicename field. Used to set a user's profile screen name.
+	 * 
+	 * @param int $uid
+	 * @param string $name
+	 * @access private
+	 */
 	
 	private function update_user_nicename($uid, $name) {
 	

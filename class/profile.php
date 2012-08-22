@@ -390,10 +390,13 @@ class SSO_Profile {
 				
 				$user = $this->handle_response($xml);
 				
+				/*var_dump($user);
+				exit;*/
+				
 				//Check for error from CIS server
 				if(isset($user->code)) {
 					
-					return array('error' => $user->message);
+					return array('code' => $user->code, 'error' => $user->message);
 				}
 				
 			} catch(Exception $e) {
@@ -732,7 +735,7 @@ class SSO_Profile {
 		 $xml = new SimpleXmlElement($xml);
          $user = $xml->children();
          
-		 /*echo '<pre>';
+		/* echo '<pre>';
          var_dump($user);
          exit;*/
          
