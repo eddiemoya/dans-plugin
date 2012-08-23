@@ -37,3 +37,25 @@ function sso_logout_link($text) {
 	
 	echo '<a href="?ssologout&origin=' . urlencode(strip_qs($current_url)) . '" title="Logout" class="bold">' . $text . '</a>';
 }
+
+function can_access_admin() {
+    return ((!current_user_can("activate_plugins") && !current_user_can("create_users")) || !current_user_can("access_dashboard"));
+}
+
+function disallow_dashboard() {
+    if (can_access_admin()) {
+        if (is_admin()) {
+            wp_redirect(site_url());
+        }
+    }
+}
+
+add_action('admin_init', "disallow_dashboard");
+
+function hide_adminbar() {
+    if (can_access_admin()) {
+        add_filter('show_admin_bar','__return_false');
+    }
+}
+
+add_action('setup_theme', "hide_adminbar");
