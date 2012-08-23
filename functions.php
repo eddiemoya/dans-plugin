@@ -50,7 +50,7 @@ function disallow_dashboard() {
     }
 }
 
-add_action('admin_init', "disallow_dashboard");
+//add_action('admin_init', "disallow_dashboard");
 
 function hide_adminbar() {
     if (can_access_admin()) {
@@ -58,4 +58,4 @@ function hide_adminbar() {
     }
 }
 
-add_action('setup_theme', "hide_adminbar");
+//add_action('setup_theme', "hide_adminbar");
