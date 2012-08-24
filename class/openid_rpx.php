@@ -69,9 +69,9 @@ class OpenID_RPX {
 							->execute();
 							
 				
-				echo '<pre>';		
+				/*echo '<pre>';		
 				var_dump($response);
-				exit;
+				exit;*/
 										
 			//If response OK, sets 'user' property (array)
 			//, else sends to login page with message				
