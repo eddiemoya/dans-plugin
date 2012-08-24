@@ -69,9 +69,9 @@ class OpenID_RPX {
 							->execute();
 							
 				
-				/*echo '<pre>';		
+				echo '<pre>';		
 				var_dump($response);
-				exit;*/
+				exit;
 										
 			//If response OK, sets 'user' property (array)
 			//, else sends to login page with message				
@@ -287,6 +287,10 @@ class OpenID_RPX {
 			$this->user['email'] = $response->profile->email;
 			$this->user['openid_provider'] = rtrim(strtolower($response->profile->providerName), '!');
 			$this->user['openid_id'] = $response->profile->identifier;
+			
+			/*echo '<pre>';
+			var_dump($this->user);
+			exit;*/
 			
 		} else {
 			
