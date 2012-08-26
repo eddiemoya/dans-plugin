@@ -288,6 +288,10 @@ class OpenID_RPX {
 			$this->user['openid_provider'] = rtrim(strtolower($response->profile->providerName), '!');
 			$this->user['openid_id'] = $response->profile->identifier;
 			
+			/*echo '<pre>';
+			var_dump($this->user);
+			exit;*/
+			
 		} else {
 			
 			//There was an issue, send them to login page, with error
