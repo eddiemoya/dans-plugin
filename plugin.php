@@ -5,9 +5,15 @@
 /*
 Plugin Name: Sears SSO Login and Profile
 Description: Integrates Wordpress with the Sears SSO and Profile web services.
-Version: 0.1.0
+Version: 0.1.1
 Author: Dan Crimmins & Brian Greenacre
 */
+
+/** Changelog 
+ * 
+ * Fixed the dissallow sidebar function so that is permits ajax requests
+**/
+
 
 /**
  * Sears Holdings SSO and Profile wordpress plugin.

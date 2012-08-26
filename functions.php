@@ -44,7 +44,9 @@ function can_access_admin() {
 function disallow_dashboard() {
     if (!can_access_admin()) {
         if (is_admin()) {
-            wp_redirect(site_url());
+        	if(empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
+            	wp_redirect(site_url());
+            }
         }
     }
 }
