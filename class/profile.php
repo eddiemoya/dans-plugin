@@ -60,13 +60,14 @@ class SSO_Profile {
 	 * @see set_action()
 	 * @var array
 	 */
-	private $_actions = array('update'			=> 'user/',
-							  'get'				=> 'user/',
-				 			  'search' 			=> 'user/search/',
-							  'reset_password' 	=> 'user/reset/',
-							  'authorize_reset' => 'user/auth/',
-							  'change_password' => 'user/changepass/',
-							  'create'			=> 'user/');
+	private $_actions = array('update'					=> 'user/',
+							  'get'						=> 'user/',
+				 			  'search' 					=> 'user/search/',
+							  'reset_password' 			=> 'user/reset/',
+							  'authorize_reset' 		=> 'user/auth/',
+							  'change_password' 		=> 'user/changepass/',
+							  'create'					=> 'user/',
+							  'validate_screen_name'	=> 'user/screenName/validate/');
 	
 	/**
 	 * The key provided by CIS to use in creation of the digital signature.
@@ -418,6 +419,36 @@ class SSO_Profile {
 	}
 	
 	/**
+	 * Accepts a screen name and validates it.
+	 * 
+	 * @param string $screen_name
+	 * @return array - contains a code and message
+	 */
+	public function validate_screen_name($screen_name) {
+		
+		$xml = $this->set_query('sid', $this->_sid)
+					->set_query('ts', $this->timestamp)
+					->set_query('sig', $this->digital_signature)
+					->set_query('screenName', $screen_name)
+					->set_action(__METHOD__)
+					->set_method('GET')
+					->execute();
+					
+		$validate = $this->handle_response($xml);
+		
+			if($validate) {
+				
+				include SHCSSO_CONFIG_DIR . 'errors.php';
+					
+				return array('code' => $validate->code, 'message' => $sso_errors[$validate->code]);
+				
+			} else {
+				
+				return array('code' => '200', 'message' => 'Screen name is valid and available.');
+			}
+	}
+	
+	/**
 	 * Use to update SSO User's profile data.
 	 * 
 	 * @param int $sso_guid - SSO GUID
@@ -667,8 +698,6 @@ class SSO_Profile {
 		$url = $this->create_url();
 		
 		
-		
-		
 		$options = array(
 			
             CURLOPT_RETURNTRANSFER  => TRUE,
@@ -731,9 +760,16 @@ class SSO_Profile {
 	 */
 	private function handle_response($xml) {
 		
-		
-		 $xml = new SimpleXmlElement($xml);
-         $user = $xml->children();
+		if(! empty($xml)) {
+			
+			$xml = new SimpleXmlElement($xml);
+         	$user = $xml->children();
+         	
+		} else {
+			
+			$user = false;
+		}
+		 
          
 		/* echo '<pre>';
          var_dump($user);
