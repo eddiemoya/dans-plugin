@@ -741,7 +741,10 @@ class SSO_Profile {
 
         if ( ! $response)
         {
-            throw new Exception('Encountered an error trying to send request. cURL Error: ' . $code);
+        	if($code != 200) {
+        		
+            	throw new Exception('Encountered an error trying to send request. cURL Error: ' . $code);
+        	}
             
         } else {
         	
