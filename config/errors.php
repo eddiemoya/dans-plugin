@@ -19,6 +19,7 @@ $sso_errors = array(
     '500.130'    => "password doesn't meet security requirement",
     '500.140'    => "Invalid birth date",
     '500.150'    => "Screen name field required",
+	'500.155'	 => 'Screen name doesn\'t meet security requirement',
     '500.160'    => "Invalid site-id field",
     '500.170'    => "Invalid user status",
     '500.180'    => "Email address is required",
