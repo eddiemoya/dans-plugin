@@ -38,6 +38,7 @@ if ( ! defined('SHCSSO_VERSION'))
     require_once SHCSSO_CLASS_DIR . 'profile.php';
     require_once SHCSSO_CLASS_DIR . 'sso_admin.php';
     require_once SHCSSO_CLASS_DIR . 'openid_rpx.php';
+    require_once SHCSSO_CLASS_DIR . 'user_location.php';
     
     require_once SHCSSO_PATH . 'functions.php';
     

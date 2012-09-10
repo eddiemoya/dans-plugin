@@ -344,7 +344,7 @@ class SSO {
 						var_dump($e);
 						exit;*/
 						
-						$this->error_redirect('New User Creation failed.');
+						$this->error_redirect('Systems error occurred on login.');
 					}
 						
 				}
@@ -627,10 +627,7 @@ class SSO {
 	 * @access private
 	 */
 	function register($username, $password, $zipcode) {
-		/*echo 'Username: ' . $username . '<br>';
-		echo 'Password: ' . $password . '<br>';
-		echo 'Zipcode: '  . $zipcode . '<br>';
-		exit;*/
+		
 		if(empty($username) || empty($password) || empty($zipcode)) {
 			
 			$this->error_redirect('Please enter a username, password and zipcode.');
@@ -642,10 +639,6 @@ class SSO {
 				 ->set_query('logonPassword', $password)
 				 ->set_query('zipcode', $zipcode)
 				 ->set_action(__METHOD__);
-				 
-				 /*echo '<pre>';
-				 var_dump($this->_query);
-				 exit;*/
 				 
 			 return $this;
 	}
@@ -751,7 +744,7 @@ class SSO {
             
             $user = $xml->children('http://www.yale.edu/tp/cas');
             
-           /*echo '<pre>';
+           /* echo '<pre>';
             var_dump($user);
             exit;*/
             
@@ -810,6 +803,15 @@ class SSO {
 			 								 'user_nicename' 	=> $screen_name));*/
 			 			$this->update_user_nicename($user_id, $screen_name);
 			 		}
+		 		}
+		 		
+		 		//If user does not have location information, or their zipcode has changed - create/update 
+		 		if(! $this->has_location($user_id) || $this->user_zipcode_changed($user_id, $sso_guid)){
+		 			
+		 			/*echo 'User does NOT have location';
+		 			exit;*/
+		 			
+		 			$this->update_location($user_id, $sso_guid);
 		 		}
 		 		
 		 		
@@ -1165,6 +1167,70 @@ class SSO {
 								array('ID' => $uid));
 						
 		return ($update) ? true : false;
+	}
+	
+	/**
+	 * Checks if user has the following user_meta fields set (user_city, user_state)
+	 * 
+	 * @param int $user_id
+	 * @return bool
+	 */
+	
+	private function has_location($user_id) {
+		
+		return (get_user_meta($user_id, 'user_city', true) && get_user_meta($user_id, 'user_state', true)) ? true : false;
+		
+	} 
+	
+	/**
+	 * Checks if the user_zipcode meta for the user differs from their SSO zipcode.
+	 * 
+	 * @uses SSO_Profile class
+	 * @param int $user_id
+	 * @param int $sso_guid
+	 * @return bool
+	 */
+	private function user_zipcode_changed($user_id, $sso_guid) {
+		
+		$profile = new SSO_Profile;
+		
+		$user = $profile->get($sso_guid);
+		
+		$zipcode = (! isset($user['error'])) ? $user['zipcode'] : false;
+		
+		return (trim($zipcode) != get_user_meta($user_id, 'user_zipcode', true)) ? true : false;
+		
+	}
+	
+	/**
+	 * Sets/updates user meta fields: user_zipcode, user_city, user_state.
+	 * 
+	 * @uses User_Location class
+	 * @param int $user_id
+	 * @param int $sso_guid
+	 * @return void
+	 */
+	
+	private function update_location($user_id, $sso_guid) {
+		
+		$profile = new SSO_Profile;
+		
+		$user = $profile->get($sso_guid);
+		
+		$zipcode = (! isset($user['error'])) ? (string) $user['zipcode'] : false;
+		
+			if($zipcode) {
+				
+				//Get city & state
+				$user_location = new User_Location;
+				
+				if($location = $user_location->get($zipcode)->response) {
+					
+					update_user_meta($user_id, 'user_zipcode', $zipcode);
+					update_user_meta($user_id, 'user_city', $location['city']);
+					update_user_meta($user_id, 'user_state', $location['state']);
+				}
+			}
 	}
 	
 	
