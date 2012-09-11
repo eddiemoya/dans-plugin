@@ -21,11 +21,69 @@ class User_Location {
 	private $_zipcode;
 	
 	/**
+	 * Assoc array of state abbr to state name
+	 * @var array
+	 */
+	private $_state_abbr = array('AL'=>"Alabama",
+				                'AK'=>"Alaska", 
+				                'AZ'=>"Arizona", 
+				                'AR'=>"Arkansas", 
+				                'CA'=>"California", 
+				                'CO'=>"Colorado", 
+				                'CT'=>"Connecticut", 
+				                'DE'=>"Delaware", 
+				                'DC'=>"District Of Columbia", 
+				                'FL'=>"Florida", 
+				                'GA'=>"Georgia", 
+				                'HI'=>"Hawaii", 
+				                'ID'=>"Idaho", 
+				                'IL'=>"Illinois", 
+				                'IN'=>"Indiana", 
+				                'IA'=>"Iowa", 
+				                'KS'=>"Kansas", 
+				                'KY'=>"Kentucky", 
+				                'LA'=>"Louisiana", 
+				                'ME'=>"Maine", 
+				                'MD'=>"Maryland", 
+				                'MA'=>"Massachusetts", 
+				                'MI'=>"Michigan", 
+				                'MN'=>"Minnesota", 
+				                'MS'=>"Mississippi", 
+				                'MO'=>"Missouri", 
+				                'MT'=>"Montana",
+				                'NE'=>"Nebraska",
+				                'NV'=>"Nevada",
+				                'NH'=>"New Hampshire",
+				                'NJ'=>"New Jersey",
+				                'NM'=>"New Mexico",
+				                'NY'=>"New York",
+				                'NC'=>"North Carolina",
+				                'ND'=>"North Dakota",
+				                'OH'=>"Ohio", 
+				                'OK'=>"Oklahoma", 
+				                'OR'=>"Oregon", 
+				                'PA'=>"Pennsylvania", 
+				                'RI'=>"Rhode Island", 
+				                'SC'=>"South Carolina", 
+				                'SD'=>"South Dakota",
+				                'TN'=>"Tennessee", 
+				                'TX'=>"Texas", 
+				                'UT'=>"Utah", 
+				                'VT'=>"Vermont", 
+				                'VA'=>"Virginia", 
+				                'WA'=>"Washington", 
+				                'WV'=>"West Virginia", 
+				                'WI'=>"Wisconsin", 
+				                'WY'=>"Wyoming");
+	
+	/**
 	 * Holds response from service. Array of data (city, state, country) or false.
 	 * 
 	 * @var mixed (array | bool)
 	 */
 	public $response = false;
+	
+	
 	
 	public function __construct() {
 		
@@ -43,6 +101,8 @@ class User_Location {
 		$this->_zipcode = $zipcode;
 		
 		$this->execute_request();
+		
+		$this->convert_state_name_to_abbr();
 		
 		return $this;
 		
@@ -106,6 +166,22 @@ class User_Location {
 		$location = json_decode($json, true);
 		
 		$this->response = ($location) ? $location : false;
+	}
+	
+	
+	private function convert_state_name_to_abbr() {
+		
+		if($this->response) {
+			
+			$abbr = array_search(ucfirst(strtolower($this->response['state'])), $this->_state_abbr);
+			
+			if($abbr !== false) {
+				
+				$this->response['state'] = $abbr;
+			}
+			
+		}
+		
 	}
 	
 }
