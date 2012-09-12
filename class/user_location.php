@@ -179,7 +179,7 @@ class User_Location {
 		
 		if($this->response) {
 			
-			$abbr = array_search(ucfirst(strtolower($this->response['state'])), $this->_state_abbr);
+			$abbr = array_search(trim($this->response['state']), $this->_state_abbr);
 			
 			if($abbr !== false) {
 				
