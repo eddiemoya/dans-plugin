@@ -168,7 +168,13 @@ class User_Location {
 		$this->response = ($location) ? $location : false;
 	}
 	
-	
+	/**
+	 * Converts state element in $response to two letter abbr
+	 * 
+	 * @access private
+	 * @param void
+	 * @return void
+	 */
 	private function convert_state_name_to_abbr() {
 		
 		if($this->response) {
