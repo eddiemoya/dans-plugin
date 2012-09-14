@@ -1,42 +1,100 @@
 <?php
-
+/**
+ * Production values: 
+ * 		api key:  cb097f9ddff64676d5017df4c335d740ae7e9915 
+ * 		endpoint URL: https://signin.shld.net
+ *
+ */
 class OpenID_RPX {
 	
+	/**
+	 * Array of environment endpoint URLS
+	 * @var array
+	 */
 	private $_endpoints = array('production'	=> 'https://rpxnow.com/api/v2/',
 								'qa'			=> 'https://rpxnow.com/api/v2/',
 								'integration'	=> 'https://rpxnow.com/api/v2/');
 	
+	/**
+	 * Environment
+	 * @var string
+	 */
 	private $_environment = 'production';
 	
+	/**
+	 * Endpoint URL
+	 * @var string
+	 */
 	private $_endpoint = 'https://rpxnow.com/api/v2/';
 	
+	/**
+	 * API Key
+	 * @var string
+	 */
 	private $_api_key = 'f6a74858c2c73195905a60579116293b9f5eb7fd';
 	
+	/**
+	 * Action to URI mappings
+	 * @var array
+	 */
 	private $_actions = array('auth_info'		=> 'auth_info',
 							  'get_mappings' 	=> 'mappings',
 							  'map'				=> 'map');
 	
+	/**
+	 * Holds querystring params/values
+	 * @var array
+	 */
 	private $_query = array();
 	
+	/**
+	 * Holds post param/values
+	 * @var array
+	 */
 	private $_post;
 	
+	/**
+	 * The HTTP method to use: GET,POST,PUT, etc.
+	 * @var string
+	 */
 	private $_method;
 	
+	/**
+	 * The action part of the URI
+	 * @var string
+	 */
 	private $_action;
 	
-	private $_sso_profile = null; //SSO_Profile Object
+	/**
+	 * Instance of SSO_Profile object
+	 * @var unknown_type
+	 */
+	private $_sso_profile = null; 
 	
+	/**
+	 * Holds user data from response from api call
+	 * @var array
+	 */
 	public $user = array();
 	
+	/**
+	 * The URL on our site that JanRain sends response to
+	 * @var string
+	 */
 	public $token_url;
 	
-	
+	/**
+	 * PHP4 Constructor
+	 */
 	public function OpenID_RPX() {
 		
 		$this->__construct();
 		
 	}
 	
+	/**
+	 * PHP5 constructor
+	 */
 	public function __construct() {
 		
 		//Get and set Plugin options
@@ -52,7 +110,10 @@ class OpenID_RPX {
 		
 	}
 	
-	
+	/**
+	 * Handles token sent from JanRain
+	 * @param string $token
+	 */
 	public function auth_info($token = null) {
 		
 		/*var_dump($token);
@@ -116,7 +177,10 @@ class OpenID_RPX {
 		}
 	}
 	
-	//Retrieve WP plugin options for openID
+	/**
+	 * Retrieve WP plugin options for openID, and sets properties
+	 * @param void
+	 */
 	private function set_options() {
 		
 		$options = get_option(SHCSSO_OPTION_PREFIX . 'settings');
@@ -134,6 +198,10 @@ class OpenID_RPX {
 		
 	}
 	
+	/**
+	 * Gets OpenID mappings by GUID
+	 * @param string $guid
+	 */
 	private function get_mappings($guid) {
 		
 		$response = $this->set_action(__METHOD__)
@@ -146,6 +214,10 @@ class OpenID_RPX {
 		
 	}
 	
+	/**
+	 * Maps a GUID to OpenID provider
+	 * @param string - SSO GUID
+	 */
 	private function map($guid) {
 		
 		$response = $this->set_action(__METHOD__)
@@ -163,7 +235,11 @@ class OpenID_RPX {
 			 return ($response->stat == 'ok') ? true : false; 
 	}
 	
-	
+	/**
+	 * Sets action based on method calling it.
+	 * 
+	 * @param string $method
+	 */
 	private function set_action($method) {
 		
 		$method = ltrim($method, __CLASS__ . '::');
@@ -172,7 +248,12 @@ class OpenID_RPX {
 		return $this;
 	}
 	
-	
+	/**
+	 * Adds key/value pair to query property (array)
+	 * 
+	 * @param string $key
+	 * @param string $value
+	 */
 	private function set_query($key, $value) {
 		
 		$this->_query[$key] = $value;
@@ -180,6 +261,10 @@ class OpenID_RPX {
 		return $this;
 	}
 	
+	/**
+	 * Sets post property
+	 * @param array $data
+	 */
 	private function set_post($data) {
 		
 		$this->_post = $data;
@@ -187,6 +272,10 @@ class OpenID_RPX {
 		return $this;
 	}
 	
+	/**
+	 * Sets method property
+	 * @param string $verb
+	 */
 	private function set_method($verb) {
 		
 		$this->_method = $verb;
@@ -194,16 +283,29 @@ class OpenID_RPX {
 		return $this;
 	}
 	
+	/**
+	 * Sets endpoint property
+	 * @param void
+	 */
 	private function create_url() {
 		
 		return $this->_endpoint . $this->_action . ((count($this->_query)) ?  '?' . $this->create_querystring() : '');
 	}
 	
+	/**
+	 * Returns query property - the querystring
+	 * @param void
+	 * @return string -- query property
+	 */
 	private function get_query() {
 		
 		return $this->_query;
 	} 
 	
+	/**
+	 * Creates querystring string from query property
+	 * @return string - the querystring
+	 */
 	private function create_querystring() {
 		
 		$qs = '';
@@ -216,7 +318,12 @@ class OpenID_RPX {
 		return rtrim($qs, '&');
 	}
 	
-		
+	/**
+	 * Makes cURL request, and returns response as object, or throws exception
+	 * 
+	 * @throws Exception
+	 * @return object - the response data
+	 */
 	private function execute() {
 		
 		$url = $this->create_url();
@@ -241,13 +348,7 @@ class OpenID_RPX {
         			
         }
         		
-        		/*echo '<pre>';
-        		var_dump($options[CURLOPT_POSTFIELDS]);
-        		exit;*/
-        		
-        
-       
-        
+  
         $ch = curl_init();
         curl_setopt_array($ch, $options);
         $response = curl_exec($ch);
@@ -265,6 +366,12 @@ class OpenID_RPX {
         }
 	}
 	
+	/**
+	 * Takes repsonse object and sets user property (array), 
+	 * or redirects to login page with error
+	 * 
+	 * @param object $response
+	 */
 	private function handle_auth_response($response) {
 		
 		if($response->stat == 'ok') {
@@ -295,17 +402,28 @@ class OpenID_RPX {
 		} else {
 			
 			//There was an issue, send them to login page, with error
-			$this->redirect_to_login('Authentication Failed. Please enter a valid username and password.');
+			$this->redirect_to_login('Authentication failed with the provider. Please enter a valid username and password.');
 		}
 		
 	}
 	
+	/**
+	 * Redirects user to login page with error message
+	 * 
+	 * @param string $msg - the error message 
+	 */
 	private function redirect_to_login($msg) {
 		
 		header('Location: ' . $this->url_append_qs('error=' . urlencode($msg) . '&origin=' . $_GET['origin'], $this->_sso_profile->login_page));
 		exit;
 	}
 	
+	/**
+	 * Takes a URL and adds querystring params to existing params
+	 * 
+	 * @param string $qs
+	 * @param string $url
+	 */
 	private function url_append_qs($qs, $url) {
 	
 		$url_parts = parse_url($url);
@@ -344,6 +462,10 @@ class OpenID_RPX {
 			}
 	}
 	
+	/**
+	 * Returns the current URL
+	 * @return string 
+	 */
 	private function get_current_url() {
 		
 		return (! empty($_SERVER['HTTPS']) ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
