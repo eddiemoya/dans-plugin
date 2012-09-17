@@ -3,6 +3,10 @@
  * Production values: 
  * 		api key:  cb097f9ddff64676d5017df4c335d740ae7e9915 
  * 		endpoint URL: https://signin.shld.net
+ * 
+ * QA: 
+ * 		api_key: f6a74858c2c73195905a60579116293b9f5eb7fd
+ * 		endpoint: https://rpxnow.com/api/v2/
  *
  */
 class OpenID_RPX {
