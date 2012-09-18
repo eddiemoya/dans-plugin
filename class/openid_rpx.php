@@ -2,11 +2,11 @@
 /**
  * Production values: 
  * 		api key:  cb097f9ddff64676d5017df4c335d740ae7e9915 
- * 		endpoint URL: https://signin.shld.net
+ * 		endpoint URL: https://signin.shld.net/api/v2/
  * 
  * QA: 
  * 		api_key: f6a74858c2c73195905a60579116293b9f5eb7fd
- * 		endpoint: https://rpxnow.com/api/v2/
+ * 		endpoint URL: https://rpxnow.com/api/v2/
  *
  */
 class OpenID_RPX {
@@ -15,7 +15,7 @@ class OpenID_RPX {
 	 * Array of environment endpoint URLS
 	 * @var array
 	 */
-	private $_endpoints = array('production'	=> 'https://rpxnow.com/api/v2/',
+	private $_endpoints = array('production'	=> 'https://signin.shld.net/api/v2/',
 								'qa'			=> 'https://rpxnow.com/api/v2/',
 								'integration'	=> 'https://rpxnow.com/api/v2/');
 	
@@ -35,7 +35,7 @@ class OpenID_RPX {
 	 * API Key
 	 * @var string
 	 */
-	private $_api_key = 'f6a74858c2c73195905a60579116293b9f5eb7fd';
+	private $_api_key = 'cb097f9ddff64676d5017df4c335d740ae7e9915';
 	
 	/**
 	 * Action to URI mappings
@@ -120,8 +120,6 @@ class OpenID_RPX {
 	 */
 	public function auth_info($token = null) {
 		
-		/*var_dump($token);
-		exit;*/
 		
 		if($token && strlen($token) == 40) {
 			
@@ -137,7 +135,7 @@ class OpenID_RPX {
 				/*echo '<pre>';		
 				var_dump($response);
 				exit;*/
-										
+														
 			//If response OK, sets 'user' property (array)
 			//, else sends to login page with message				
 			$this->handle_auth_response($response);
@@ -332,6 +330,7 @@ class OpenID_RPX {
 		
 		$url = $this->create_url();
 		
+		
 		$options = array(
 			
             CURLOPT_RETURNTRANSFER  => TRUE,
@@ -377,6 +376,7 @@ class OpenID_RPX {
 	 * @param object $response
 	 */
 	private function handle_auth_response($response) {
+		
 		
 		if($response->stat == 'ok') {
 			
