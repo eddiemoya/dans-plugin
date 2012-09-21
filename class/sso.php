@@ -139,7 +139,9 @@ class SSO {
 	 * @return void
 	 */
 	public function __construct() {
-		
+			
+			var_dump(get_bloginfo('name'));
+			exit;
 			//Retrieve and set options
 			$this->set_options();
 			
@@ -290,11 +292,8 @@ class SSO {
 	 */
 	private function process_request() {
 		
-		//Check if there was an error, if so redirect to default login page
+		//Check if there was an error, if so redirect to default login page/registration page
 		if($error = $this->get_login_error()) {
-			
-			/*echo 'Got error.';
-			exit;*/
 	
 			if(isset($_GET['ssoreg'])) {
 				
@@ -1231,6 +1230,20 @@ class SSO {
 					update_user_meta($user_id, 'user_state', $location['state']);
 				}
 			}
+	}
+	
+	/**
+	 * Send request to Responsys for new user registration.
+	 */
+	private function send_to_responsys($email, $user_id) {
+		
+		$email_parts = explode('@', $email);
+		$username = $email_parts[0];
+		
+		$site = get_current_site();
+		
+		$url = "https://sears.rsys4.net/servlet/campaignrespondent?_ID_=sears.10631&EMAIL_ADDRESS={$email}&SCREEN_NAME={$username}&SID_CODE=ITx20120918TriggeredSRSMCWelcome&LAUNCH_DATE=2012-09-18&OPT_TYPE_CODE=MS";
+		
 	}
 	
 	
