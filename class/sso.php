@@ -1258,8 +1258,6 @@ class SSO {
 			$url = "https://kmart.rsys4.net/servlet/campaignrespondent?_ID_=kmart.3611&EMAIL_ADDRESS={$email}&SCREEN_NAME={$username}&SID_CODE=ITx20120921TriggeredMKwelcome&LAUNCH_DATE=2012-09-21&OPT_TYPE_CODE=MK&USERID={$user_id}";
 		}
 		
-		echo $url;
-		exit;
 		
 	    $options = array(CURLOPT_URL            => $url,
 			            CURLOPT_RETURNTRANSFER  => TRUE,
