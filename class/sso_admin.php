@@ -10,7 +10,7 @@ class SSO_Admin {
 									'sso_login_page_uri'	=> '',
 									'sso_reg_page_uri'		=> '',
 									'profile_pwd_reset_page'=> '',
-									'oid_api_key'			=> 'f6a74858c2c73195905a60579116293b9f5eb7fd');
+									/*'oid_api_key'			=> 'f6a74858c2c73195905a60579116293b9f5eb7fd'*/);
 									
 	public static $environments = array('production' 	=> 'production',
 									 	'integration'			=> 'integration',
@@ -78,8 +78,8 @@ class SSO_Admin {
         add_settings_field('profile_pwd_reset_page', __('Password Reset Page'), array(__CLASS__, 'profile_pwd_reset_page'), 'shcsso-settings', SHCSSO_OPTION_PREFIX . 'profile_settings');
         
         //OpenID section
-        add_settings_section(SHCSSO_OPTION_PREFIX . 'oid_settings', __('OpenID Settings'), array(__CLASS__, 'oid_section'), 'shcsso-settings');
-        add_settings_field('oid_api_key', __('JanRain API Key'), array(__CLASS__, 'oid_api_key'), 'shcsso-settings', SHCSSO_OPTION_PREFIX . 'oid_settings');
+       // add_settings_section(SHCSSO_OPTION_PREFIX . 'oid_settings', __('OpenID Settings'), array(__CLASS__, 'oid_section'), 'shcsso-settings');
+        //add_settings_field('oid_api_key', __('JanRain API Key'), array(__CLASS__, 'oid_api_key'), 'shcsso-settings', SHCSSO_OPTION_PREFIX . 'oid_settings');
         
     }
 	
@@ -208,14 +208,14 @@ class SSO_Admin {
         echo '<p>' . __('Settings specifically for JanRain OpenID.') . '</p>';
     }
     
-    public static function oid_api_key() {
+   /* public static function oid_api_key() {
     	
     	$options = get_option(SHCSSO_OPTION_PREFIX . 'settings');
     	$key = $options['oid_api_key'];
     	?>
     		<input type="text" name="<?php echo htmlspecialchars(SHCSSO_OPTION_PREFIX . 'settings[oid_api_key]', ENT_QUOTES);?>" id="oid_api_key" value="<?php echo $key;?>" />
     	<?php 
-    }  
+    } */ 
     
     
 }

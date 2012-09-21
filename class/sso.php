@@ -140,8 +140,6 @@ class SSO {
 	 */
 	public function __construct() {
 			
-			var_dump(get_bloginfo('name'));
-			exit;
 			//Retrieve and set options
 			$this->set_options();
 			
@@ -787,7 +785,11 @@ class SSO {
 	 				}
 		 	} 
 		 	
-		 		
+		 		//Initiate welcome e-mail from Responsys on registation.
+		 		if(isset($_GET['ssoreg'])) {
+		 			
+		 			$this->send_to_responsys($email, $user_id);
+		 		}
 		 		
 		 		//Check if user has a screen name set, if not check CIS and set user meta if found
 		 		if(! get_user_meta($user_id, 'profile_screen_name', true)) {
@@ -1234,16 +1236,51 @@ class SSO {
 	
 	/**
 	 * Send request to Responsys for new user registration.
+	 * 
+	 * @access private
+	 * @param string $email - user's e-mail
+	 * @param int $user_id - user's WP userID
+	 * @return bool
 	 */
 	private function send_to_responsys($email, $user_id) {
 		
 		$email_parts = explode('@', $email);
 		$username = $email_parts[0];
 		
-		$site = get_current_site();
+		$site = (stripos(get_bloginfo('name'), 'sears') !== false) ? 'MS' : 'MK';
 		
-		$url = "https://sears.rsys4.net/servlet/campaignrespondent?_ID_=sears.10631&EMAIL_ADDRESS={$email}&SCREEN_NAME={$username}&SID_CODE=ITx20120918TriggeredSRSMCWelcome&LAUNCH_DATE=2012-09-18&OPT_TYPE_CODE=MS";
+		if($site == 'MS') { //Sears
+			
+			$url = "https://sears.rsys4.net/servlet/campaignrespondent?_ID_=sears.10631&EMAIL_ADDRESS={$email}&SCREEN_NAME={$username}&SID_CODE=ITx20120921TriggeredSRSMCWelcome&LAUNCH_DATE=2012-09-21&OPT_TYPE_CODE=MS&USERID={$user_id}";
+			
+		} else { //Kmart
+			
+			$url = "https://kmart.rsys4.net/servlet/campaignrespondent?_ID_=kmart.3611&EMAIL_ADDRESS={$email}&SCREEN_NAME={$username}&SID_CODE=ITx20120921TriggeredMKwelcome&LAUNCH_DATE=2012-09-21&OPT_TYPE_CODE=MK&USERID={$user_id}";
+		}
 		
+		
+	    $options = array(CURLOPT_URL            => $url,
+			            CURLOPT_RETURNTRANSFER  => TRUE,
+			            CURLOPT_HEADER          => FALSE,
+			            CURLOPT_SSL_VERIFYHOST  => 0,
+			            CURLOPT_SSL_VERIFYPEER  => 0,
+			            CURLOPT_USERAGENT       => $_SERVER['HTTP_USER_AGENT'],
+			            CURLOPT_CUSTOMREQUEST 	=> 'GET');
+			            
+			            
+        $ch = curl_init();
+
+        curl_setopt_array($ch, $options);
+
+        $response = curl_exec($ch);
+        
+        // Get the response information
+        $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        
+        curl_close($ch);
+        
+        return ($code == 200) ? true : false;			            
+       
 	}
 	
 	

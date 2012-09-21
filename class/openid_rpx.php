@@ -1,10 +1,13 @@
 <?php
 /**
+ * @author Dan Crimmins
+ * 
+ * 
  * Production values: 
  * 		api key:  cb097f9ddff64676d5017df4c335d740ae7e9915 
  * 		endpoint URL: https://signin.shld.net/api/v2/
  * 
- * QA: 
+ * QA values: 
  * 		api_key: f6a74858c2c73195905a60579116293b9f5eb7fd
  * 		endpoint URL: https://rpxnow.com/api/v2/
  *
@@ -20,6 +23,20 @@ class OpenID_RPX {
 								'integration'	=> 'https://rpxnow.com/api/v2/');
 	
 	/**
+	 * Array of api keys based on environment
+	 * @var array
+	 */
+	private $_api_keys = array('production'		=> 'cb097f9ddff64676d5017df4c335d740ae7e9915',
+								'qa'			=> 'f6a74858c2c73195905a60579116293b9f5eb7fd',
+								'integration'	=> 'f6a74858c2c73195905a60579116293b9f5eb7fd'); 
+	
+	/**
+	 * API key
+	 * @var string
+	 */
+	private $_api_key = 'cb097f9ddff64676d5017df4c335d740ae7e9915';
+	
+	/**
 	 * Environment
 	 * @var string
 	 */
@@ -30,12 +47,6 @@ class OpenID_RPX {
 	 * @var string
 	 */
 	private $_endpoint = 'https://rpxnow.com/api/v2/';
-	
-	/**
-	 * API Key
-	 * @var string
-	 */
-	private $_api_key = 'cb097f9ddff64676d5017df4c335d740ae7e9915';
 	
 	/**
 	 * Action to URI mappings
@@ -106,6 +117,9 @@ class OpenID_RPX {
 		
 		//Set endpoint to use based on environment option
 		$this->_endpoint = $this->_endpoints[$this->_environment];
+		
+		//Set API key
+		$this->_api_key = $this->_api_keys[$this->_environment];
 		
 		//Create and set new profile object
 		$this->_sso_profile = new SSO_Profile;
@@ -191,11 +205,11 @@ class OpenID_RPX {
 			
 			$this->_environment = $options['environment'];
 			
-				if(! empty($options['oid_api_key'])) {
+				/*if(! empty($options['oid_api_key'])) {
 					
 					$this->_api_key = $options['oid_api_key'];
 					
-				}
+				}*/
 		}
 		
 	}
