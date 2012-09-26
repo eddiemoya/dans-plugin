@@ -149,7 +149,12 @@ class SSO {
 			//Check if user is already logged into CAS on other sites --- only check if NOT logged into wordpress and cookie NOT set
 			if(! isset($_COOKIE['sso_checked']) && ! isset($_GET['ssologincheck']) && ! is_user_logged_in() && ! is_admin()) {
 				 
-				$this->verify_sso_login_state();
+				//if SSO server is up, proceed...
+				if($this->is_sso_responding()) {
+					
+					$this->verify_sso_login_state();
+				
+				}
 			}
 			
 			//Instantiate OpenID_RPX object
@@ -259,9 +264,53 @@ class SSO {
     s.parentNode.insertBefore(e, s);
 })();
 						</script>';*/
-			
+		
 		echo $sso_vars;
 	}
+	
+	/**
+	 * Checks if SSO Prod server is responding
+	 * 
+	 * @access public
+	 * @param void
+	 * @return bool
+	 */
+	private function is_sso_responding() {
+		
+		$url = $this->_endpoint;
+		
+		$options = array(
+            CURLOPT_URL             => $url,
+            CURLOPT_RETURNTRANSFER  => TRUE,
+            CURLOPT_HEADER          => FALSE,
+            CURLOPT_SSL_VERIFYHOST  => 0,
+            CURLOPT_SSL_VERIFYPEER  => 0,
+            CURLOPT_USERAGENT       => $_SERVER['HTTP_USER_AGENT'],
+            CURLOPT_CUSTOMREQUEST 	=> 'GET');
+	        
+        $ch = curl_init();
+
+        curl_setopt_array($ch, $options);
+
+        $response = curl_exec($ch);
+        
+        
+
+        // Get the response information
+        $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        
+        curl_close($ch);
+        
+        //If the server is down set sso-checked cookie, so it doesn't check again
+        if($code != '302') {
+        	
+        	setcookie('sso_checked', 'yes', 0);
+        	return false;
+        }
+        
+        	return true;
+	}
+	
 	
 	/**
 	 * Sends request to CAS to see if user has auth session from other Sears SSO sites
