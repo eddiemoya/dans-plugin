@@ -160,12 +160,19 @@ class SSO {
 			//Instantiate OpenID_RPX object
 			$this->_openid_rpx = new OpenID_RPX;
 			
+			//Used to set JS var on SSO login check
+			if(isset($_GET['referer']) && ! isset($_GET['ssologincheck'])) {
+				
+				add_action('wp_head', array($this, 'add_referer_var'));
+			}
 			
 			//Insert login & reg form json into head, if user is not logged in.
 			if(! is_user_logged_in()) {
 				
 				add_action('wp_head', array($this, 'add_sso_forms'));
 			} 
+			
+			
 		
 			
 			//Determine request made, and process accordingly
@@ -268,6 +275,12 @@ class SSO {
 		echo $sso_vars;
 	}
 	
+	public function add_referer_var() {
+		
+		echo "<script type='text/javascript'> var referer = '" . urldecode($_GET['referer']) . "';</script> \n";
+		
+	}
+	
 	/**
 	 * Checks if SSO Prod server is responding
 	 * 
@@ -324,7 +337,7 @@ class SSO {
 			
 		$origin = $this->get_current_url();
 		
-		$this->_callback = $this->url_append_qs('ssologincheck&origin=' . urlencode($origin), $origin);
+		$this->_callback = $this->url_append_qs('ssologincheck&origin=' . urlencode($origin) . '&referer=' . urlencode($_SERVER['HTTP_REFERER']), $origin);
 		
 		$this->login_check()
 			 ->redirect();
@@ -424,6 +437,7 @@ class SSO {
 				//Verify if already SSO authenticated (from other site)
 				if(isset($_GET['ssologincheck'])) {
 					
+					
 					if(isset($_POST['ticket'])) {
 						
 						try {
@@ -455,7 +469,8 @@ class SSO {
 					} else {
 						
 						setcookie('sso_checked', 'yes', 0);
-						header('Location: '. urldecode($_GET['origin']));
+						$origin = isset($_GET['referer']) ? $this->url_append_qs('referer=' . $_GET['referer'], urldecode($_GET['origin'])) : $_GET['origin'];
+						header('Location: '. urldecode($origin));
 					}
 					
 				} 
@@ -869,11 +884,13 @@ class SSO {
 		 		wp_set_current_user($user_id, $username);
 		 		wp_set_auth_cookie($user_id);
 		 		do_action('wp_login', $username);
+		 		  
 		 		
-		 		
-          		//Redirect
+		 		$origin = isset($_GET['referer']) ? $this->url_append_qs('referer=' . $_GET['referer'], urldecode($_GET['origin'])) : $_GET['origin'];
+          		
+		 		//Redirect
 		 		header('Refferer: ' . $this->get_current_url());
-		 		header('Location: ' . urldecode($_GET['origin']));
+		 		header('Location: ' . urldecode($origin));
 		 		
 		 		die; 	 
 		 		
