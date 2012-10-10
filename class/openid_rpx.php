@@ -205,11 +205,6 @@ class OpenID_RPX {
 			
 			$this->_environment = $options['environment'];
 			
-				/*if(! empty($options['oid_api_key'])) {
-					
-					$this->_api_key = $options['oid_api_key'];
-					
-				}*/
 		}
 		
 	}

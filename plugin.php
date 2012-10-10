@@ -42,7 +42,7 @@ if ( ! defined('SHCSSO_VERSION'))
     
     require_once SHCSSO_PATH . 'functions.php';
     
-    add_action('init', array('SSO', 'init'));
+    add_action('init', array('SSO', 'init'), 1);
     add_action('init', array('SSO_Admin', 'init'));
     register_activation_hook(SHCSSO_FILE, array('SSO_Admin', 'install'));
     register_deactivation_hook(SHCSSO_FILE, array('SSO_Admin', 'uninstall'));

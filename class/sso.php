@@ -11,7 +11,7 @@ class SSO {
 								'qa'			=> 'https://phoenix.ecom.sears.com:1443/shccas/');
 	
 	/**
-	 * Selected environment for request. Plugin option used to set thielseifs - 
+	 * Selected environment for request. Plugin option used to set this - 
 	 * defaults to production.
 	 * 
 	 * @var string
@@ -470,6 +470,7 @@ class SSO {
 						
 						setcookie('sso_checked', 'yes', 0);
 						$origin = isset($_GET['referer']) ? $this->url_append_qs('referer=' . $_GET['referer'], urldecode($_GET['origin'])) : $_GET['origin'];
+						header('HTTP/1.1 301 Moved Permanently');
 						header('Location: '. urldecode($origin));
 					}
 					
@@ -595,6 +596,7 @@ class SSO {
 		
 		
 		header('Refferer: ' . $this->get_current_url());
+		header('HTTP/1.1 301 Moved Permanently');
 		header('Location: ' . $url);
 		
 		exit;
@@ -673,6 +675,7 @@ class SSO {
 		$refferer = $this->get_current_url();
 
         header('Refferer: ' . $refferer);
+        header('HTTP/1.1 301 Moved Permanently');
         header('Location: ' . urldecode($_GET['origin'])); 
 
         exit;
@@ -890,6 +893,7 @@ class SSO {
           		
 		 		//Redirect
 		 		header('Refferer: ' . $this->get_current_url());
+		 		header('HTTP/1.1 301 Moved Permanently');
 		 		header('Location: ' . urldecode($origin));
 		 		
 		 		die; 	 
@@ -1002,12 +1006,14 @@ class SSO {
      */
     private function error_redirect($msg) {
     	
+    	header('HTTP/1.1 301 Moved Permanently');
     	header('Location: ' . $this->url_append_qs('err=' . urlencode($msg) . '&origin=' . $_GET['origin'], $this->_login_page));
 		exit;
     }
     
 	private function error_register_redirect($msg) {
     	
+		header('HTTP/1.1 301 Moved Permanently');
     	header('Location: ' . $this->url_append_qs('err=' . urlencode($msg) . '&origin=' . $_GET['origin'], $this->_register_page));
 		exit;
     }
