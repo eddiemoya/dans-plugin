@@ -161,7 +161,8 @@ class SSO {
 			$this->_openid_rpx = new OpenID_RPX;
 			
 			//Used to set JS var on SSO login check
-			if(isset($_GET['referer']) && ! isset($_GET['ssologincheck'])) {
+			session_start();
+			if(isset($_SESSION['referer']) && ! isset($_GET['ssologincheck'])) {
 				
 				add_action('wp_head', array($this, 'add_referer_var'));
 			}
@@ -172,8 +173,6 @@ class SSO {
 				add_action('wp_head', array($this, 'add_sso_forms'));
 			} 
 			
-			
-		
 			
 			//Determine request made, and process accordingly
 			$this->process_request();
@@ -277,7 +276,7 @@ class SSO {
 	
 	public function add_referer_var() {
 		
-		echo "<script type='text/javascript'> var referer = '" . urldecode($_GET['referer']) . "';</script> \n";
+		echo "<script type='text/javascript'> var referer = '" . urldecode($_SESSION['referer']) . "';</script> \n";
 		
 	}
 	
@@ -469,9 +468,17 @@ class SSO {
 					} else {
 						
 						setcookie('sso_checked', 'yes', 0);
-						$origin = isset($_GET['referer']) ? $this->url_append_qs('referer=' . $_GET['referer'], urldecode($_GET['origin'])) : $_GET['origin'];
+						
+						//$origin = isset($_GET['referer']) ? $this->url_append_qs('referer=' . $_GET['referer'], urldecode($_GET['origin'])) : $_GET['origin'];
+						if(isset($_GET['referer'])) {
+							
+							session_start();
+							$_SESSION['referer'] = urldecode($_GET['referer']);
+						}
+						
 						header('HTTP/1.1 301 Moved Permanently');
-						header('Location: '. urldecode($origin));
+						header('Location: '. urldecode($_GET['origin']));
+						exit;
 					}
 					
 				} 
@@ -888,13 +895,18 @@ class SSO {
 		 		wp_set_auth_cookie($user_id);
 		 		do_action('wp_login', $username);
 		 		  
-		 		
-		 		$origin = isset($_GET['referer']) ? $this->url_append_qs('referer=' . $_GET['referer'], urldecode($_GET['origin'])) : $_GET['origin'];
           		
 		 		//Redirect
-		 		header('Refferer: ' . $this->get_current_url());
+				if(isset($_GET['referer'])) {
+						
+					session_start();
+					$_SESSION['referer'] = urldecode($_GET['referer']);
+					
+				}
+		 		//$ref = (isset($_GET['referer'])) ? urldecode($_GET['referer']) : $this->get_current_url();
+				
 		 		header('HTTP/1.1 301 Moved Permanently');
-		 		header('Location: ' . urldecode($origin));
+		 		header('Location: ' . urldecode($_GET['origin']));
 		 		
 		 		die; 	 
 		 		
