@@ -147,7 +147,11 @@ class SSO {
 			$this->_endpoint = $this->_endpoints[$this->_environment];
 			
 			//Check if user is already logged into CAS on other sites --- only check if NOT logged into wordpress and cookie NOT set
-			if(! isset($_COOKIE['sso_checked']) && ! isset($_GET['ssologincheck']) && ! is_user_logged_in() && ! is_admin()) {
+			
+			
+			/* Disabled for now, this is the initial check for a current SSO session
+			 * 
+			 * if(! isset($_COOKIE['sso_checked']) && ! isset($_GET['ssologincheck']) && ! is_user_logged_in() && ! is_admin()) {
 				 
 				//if SSO server is up, proceed...
 				if($this->is_sso_responding()) {
@@ -155,7 +159,7 @@ class SSO {
 					$this->verify_sso_login_state();
 				
 				}
-			}
+			}*/
 			
 			//Instantiate OpenID_RPX object
 			$this->_openid_rpx = new OpenID_RPX;
