@@ -1339,7 +1339,7 @@ class SSO {
 		
 		if($site == 'MS') { //Sears
 			
-			$url = "https://sears.rsys4.net/servlet/campaignrespondent?_ID_=sears.10631&EMAIL_ADDRESS={$email}&SCREEN_NAME={$username}&SID_CODE=ITx20120921TriggeredSRSMCWelcome&LAUNCH_DATE=2012-09-21&OPT_TYPE_CODE=MS&USERID={$user_id}";
+			$url = "https://sears.rsys4.net/servlet/campaignrespondent?_ID_=g34ri4.872&EMAIL_ADDRESS={$email}&SCREEN_NAME={$username}&SID_CODE=ITx20120921TriggeredSRSMCWelcome&LAUNCH_DATE=2012-09-21&OPT_TYPE_CODE=MS&USERID={$user_id}";
 			
 		} else { //Kmart
 			
