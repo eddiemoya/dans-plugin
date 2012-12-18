@@ -113,10 +113,16 @@ class SSO {
 	private $_openid_rpx = null;
 	
 	/**
-	 * Holds an instance of SSO_Profile object
+	 * Holds an instance of SSO_Profile object.
 	 * @var object
 	 */
 	private $_sso_profile = null;
+	
+	/**
+	 * Holds an instance of the SSO_User object.
+	 * @var object
+	 */
+	private $_sso_user = null;
 	
 	
 	
@@ -402,9 +408,6 @@ class SSO {
 						
 					} catch(Exception $e) {
 						
-						/*echo '<pre>';
-						var_dump($e);
-						exit;*/
 						
 						$this->error_redirect('Systems error occurred on login.');
 					}
@@ -746,7 +749,7 @@ class SSO {
 	 * @access private
 	 */
 	private function set_action($method) {
-		
+	
 		$method = ltrim($method, __CLASS__ . '::');
 		$this->_action = $this->_actions[$method];
 	}
@@ -819,7 +822,7 @@ class SSO {
             
             $user = $xml->children('http://www.yale.edu/tp/cas');
             
-           /* echo '<pre>';
+            /*echo '<pre>';
             var_dump($user);
             exit;*/
             
@@ -833,11 +836,17 @@ class SSO {
           	echo 'Username: ' . $username;
           	exit;*/
           	
+          	//$sso_user = SSO_User::factory(111111);
+          	
           	//If user does NOT exist, create account
-		 	if(! $user_id = $this->get_user_by_guid($sso_guid)) {
-		 		
-		 		/*var_dump($user_id);
-		 		exit;*/
+          	$this->_sso_user = SSO_User::factory($sso_guid);
+          	$user_id = $this->_sso_user->user_id;
+          	
+          	/*echo '<pre>';
+          	var_dump($this->_sso_user);
+          	exit;*/
+          	
+		 	if(! $user_id) {
 		 		
 		 		//Create wp user
 		 		$user_id = wp_insert_user(array(
@@ -857,10 +866,11 @@ class SSO {
 		 				}
 		 				
 	 				//Insert sso_guid user meta
-	 				if( ! update_user_meta($user_id, 'sso_guid', (string) $sso_guid)) {
+	 				$this->_sso_user->set(array('guid' => $sso_guid, 'user_id' => $user_id));
+	 				/*if( ! update_user_meta($user_id, 'sso_guid', (string) $sso_guid)) {
 	 					
 	 					throw new Exception('Failed to add user meta for ' . $username);
-	 				}
+	 				}*/
 		 	} 
 		 	
 		 		//Initiate welcome e-mail from Responsys on registation.
@@ -870,28 +880,27 @@ class SSO {
 		 		}
 		 		
 		 		//Check if user has a screen name set, if not check CIS and set user meta if found
-		 		if(! get_user_meta($user_id, 'profile_screen_name', true)) {
+		 		if(! $this->_sso_user->screen_name) {
 		 			
 		 			//Check for CIS screen name, if there is one set user_nicename and user meta
 			 		if($screen_name = $this->get_screen_name($sso_guid)) {
 			 			
-			 			update_user_meta($user_id, 'profile_screen_name', $screen_name);
+			 			//update_user_meta($user_id, 'profile_screen_name', $screen_name);
+			 			$this->_sso_user->set('screen_name', $screen_name);
 			 			
 			 			//Set user_nicename to profile screen name
-			 			/*wp_insert_user(array('ID'				=> $user_id,
-			 								 'user_nicename' 	=> $screen_name));*/
 			 			$this->update_user_nicename($user_id, $screen_name);
 			 		}
 		 		}
 		 		
 		 		//If user does not have location information, or their zipcode has changed - create/update 
-		 		if(! $this->has_location($user_id) || $this->user_zipcode_changed($user_id, $sso_guid)){
+		 		if(! $this->has_location() || $this->user_zipcode_changed($sso_guid)){
 		 			
-		 			/*echo 'User does NOT have location';
-		 			exit;*/
-		 			
-		 			$this->update_location($user_id, $sso_guid);
+		 			$this->update_location($sso_guid);
 		 		}
+		 		
+		 		//Save user data to db
+		 		$this->_sso_user->save();
 		 		
 		 		
 		 		//Login
@@ -1265,9 +1274,9 @@ class SSO {
 	 * @return bool
 	 */
 	
-	private function has_location($user_id) {
+	private function has_location() {
 		
-		return (get_user_meta($user_id, 'user_city', true) && get_user_meta($user_id, 'user_state', true)) ? true : false;
+		return ($this->_sso_user->city && $this->_sso_user->state && $this->_sso_user->zipcode) ? true : false;
 		
 	} 
 	
@@ -1279,7 +1288,7 @@ class SSO {
 	 * @param int $sso_guid
 	 * @return bool
 	 */
-	private function user_zipcode_changed($user_id, $sso_guid) {
+	private function user_zipcode_changed($sso_guid) {
 		
 		$profile = new SSO_Profile;
 		
@@ -1287,7 +1296,7 @@ class SSO {
 		
 		$zipcode = (! isset($user['error'])) ? $user['zipcode'] : false;
 		
-		return (trim($zipcode) != get_user_meta($user_id, 'user_zipcode', true)) ? true : false;
+		return (trim($zipcode) != trim($this->_sso_user->zipcode)) ? true : false;
 		
 	}
 	
@@ -1300,7 +1309,7 @@ class SSO {
 	 * @return void
 	 */
 	
-	private function update_location($user_id, $sso_guid) {
+	private function update_location($sso_guid) {
 		
 		$profile = new SSO_Profile;
 		
@@ -1315,9 +1324,10 @@ class SSO {
 				
 				if($location = $user_location->get($zipcode)->response) {
 					
-					update_user_meta($user_id, 'user_zipcode', $zipcode);
-					update_user_meta($user_id, 'user_city', $location['city']);
-					update_user_meta($user_id, 'user_state', $location['state']);
+					$this->_sso_user->set(array('zipcode' => $zipcode,
+												'city'	  => $location['city'],
+												'state'   => $location['state']));
+					
 				}
 			}
 	}
