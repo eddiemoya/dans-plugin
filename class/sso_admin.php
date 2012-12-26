@@ -20,6 +20,8 @@ class SSO_Admin {
 		
 		update_option(SHCSSO_OPTION_PREFIX . 'version', SHCSSO_VERSION);
 		update_option(SHCSSO_OPTION_PREFIX . 'settings', self::$options);
+		
+		$this->create_table();
 	}
 	
 	public static function uninstall() {
@@ -33,6 +35,27 @@ class SSO_Admin {
 		add_action('admin_menu', array(__CLASS__, 'menu'));
         add_action('admin_init', array(__CLASS__, 'register_settings'));
         
+	}
+	
+	public function create_table() {
+		
+		global $wpdb;
+		
+		$sql = "CREATE TABLE IF NOT EXISTS `{$wpdb->base_prefix}sso_users` (
+				  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+				  `user_id` bigint(20) unsigned NOT NULL DEFAULT '0',
+				  `guid` bigint(50) unsigned NOT NULL DEFAULT '0',
+				  `screen_name` varchar(25) DEFAULT NULL,
+				  `zipcode` int(5) unsigned DEFAULT NULL,
+				  `city` varchar(150) DEFAULT NULL,
+				  `state` varchar(100) DEFAULT NULL,
+				  PRIMARY KEY (`id`),
+				  KEY `guid` (`guid`),
+				  KEY `user_id` (`user_id`)
+				) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;";
+		
+		require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+        dbDelta($sql);
 	}
 	
 	public static function menu()
