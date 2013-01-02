@@ -193,32 +193,25 @@ class SSO_Profile {
 	
 	public function get($sso_guid) {
 		
-	$xml = $this->set_query('sid', $this->_sid)
-			->set_query('ts', $this->timestamp)
-			->set_query('sig', $this->digital_signature)
-			->set_query('id', $sso_guid)
-			->set_action(__METHOD__)
-			->set_method('GET')
-			->execute();
-			
-			/*echo 'sid='. $this->_sid  . '<br>';
-			echo 'ts=' . $this->_timestamp . '<br>';
-			echo 'sig=' . $this->_digital_signature . '<br>';
-			echo 'action=' . $this->_action . '<br>';
-			echo 'method=' .$this->_method .'<br>'; 
-			echo 'url = ' . $this->create_url();*/
-			
-			try {
+		try {
+			$xml = $this->set_query('sid', $this->_sid)
+					->set_query('ts', $this->timestamp)
+					->set_query('sig', $this->digital_signature)
+					->set_query('id', $sso_guid)
+					->set_action(__METHOD__)
+					->set_method('GET')
+					->execute();
 				
-				//Convert XML string to SimpleXMLElement Object
-				$user = $this->handle_response($xml);
 				
-				//Check for error from CIS server
-				if(isset($user->code)) {
+					//Convert XML string to SimpleXMLElement Object
+					$user = $this->handle_response($xml);
 					
-					return array('error' => $user->message);
-				}
-				
+					//Check for error from CIS server
+					if(isset($user->code)) {
+						
+						return array('error' => $user->message);
+					}
+					
 				
 			} catch (Exception $e) {
 				
@@ -226,14 +219,14 @@ class SSO_Profile {
 			}
 			
 			//Package user attributes into array and return it.
-			$profile = array('id'		=> $user->id,
-							'status'	=> $user->status,
-							'name'		=> isset($user->name->first) ? $user->name->first . ' ' . $user->name->last : null,
-							'screenname'	=> isset($user->{'screen-names'}->{'screen-name'}->name) ? $user->{'screen-names'}->{'screen-name'}->name : null,
-							'dob'		=> isset($user->birthdate) ? $user->birthdate : null,
-							'zipcode'	=> $user->zipcode,
-							'gender'	=> isset($user->gender) ? $user->gender : null,
-							'email'		=> isset($user->emails->email) ? $user->emails->email : null);
+			$profile = array('id'		=> (string) $user->id,
+							'status'	=> (string) $user->status,
+							'name'		=> isset($user->name->first) ? (string) $user->name->first . ' ' . (string) $user->name->last : null,
+							'screenname'	=> isset($user->{'screen-names'}->{'screen-name'}->name) ? (string) $user->{'screen-names'}->{'screen-name'}->name : null,
+							'dob'		=> isset($user->birthdate) ? (string) $user->birthdate : null,
+							'zipcode'	=> (string) $user->zipcode,
+							'gender'	=> isset($user->gender) ? (string) $user->gender : null,
+							'email'		=> isset($user->emails->email) ? (string) $user->emails->email : null);
 			
 			return $profile;
 			
