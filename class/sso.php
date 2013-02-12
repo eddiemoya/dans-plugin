@@ -165,11 +165,11 @@ class SSO {
 			$this->_openid_rpx = new OpenID_RPX;
 			
 			//Used to set JS var on SSO login check
-			session_start();
+			/*session_start();
 			if(isset($_SESSION['referer']) && ! isset($_GET['ssologincheck'])) {
 				
 				add_action('wp_head', array($this, 'add_referer_var'));
-			}
+			}*/
 			
 			//Insert login & reg form json into head, if user is not logged in.
 			if(! is_user_logged_in()) {
