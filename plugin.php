@@ -34,6 +34,7 @@ if ( ! defined('SHCSSO_VERSION'))
     define('SHCSSO_OPTION_PREFIX', 'shc_sso_');
 	
     //Load classes
+    require_once SHCSSO_CLASS_DIR . 'sso_options.php';
     require_once SHCSSO_CLASS_DIR . 'sso.php';
     require_once SHCSSO_CLASS_DIR . 'profile.php';
     require_once SHCSSO_CLASS_DIR . 'sso_admin.php';
