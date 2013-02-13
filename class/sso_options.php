@@ -2,6 +2,9 @@
 
 class SSO_Options {
 	
+	protected $_endpoints = array('production'		=> 'https://sso.shld.net/shccas/',
+									'integration'	=> 'http://toad.ecom.sears.com:8080/shccas/',
+									'qa'			=> 'https://phoenix.ecom.sears.com:1443/shccas/');
 	protected $_options;
 	
 	public $data;
@@ -9,6 +12,7 @@ class SSO_Options {
 	public function __construct() {
 		
 		$this->_get_options();
+		$this->_set_service_url();
 	}
 	
 	public function factory() {
@@ -42,6 +46,11 @@ class SSO_Options {
 				$this->{$key} = $value;
 			}
 				
+	}
+	
+	protected function _set_service_url() {
+		
+		$this->service = (! empty($_SERVER['HTTPS']) ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 	}
 	
 	
