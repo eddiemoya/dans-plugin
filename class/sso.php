@@ -358,7 +358,7 @@ class SSO {
 		//Check if there was an error, if so redirect to default login page/registration page
 		if($error = $this->get_login_error()) {
 	
-			if(isset($_GET['ssoreg'])) {
+			if(isset($_GET['ssoregister'])) {
 				
 				$this->error_register_redirect($error);
 				
