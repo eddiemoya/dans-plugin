@@ -94,4 +94,9 @@ $sso_errors = array(
     '500.960'    => "Invalid Openid info detail - invalid provider name found",
     '500.970'    => "Invalid Openid info detail - identifier is required",
     '500.980'    => "Duplicated FBConnect data exists, or invalid data",
+    '100000'     => "Systems error occurred on login.",
+    '100001'     => "There was an issue with the Authentication provider, please try again.SSO",
+    '100002'     => "Please enter a username and password.",
+    '100003'     => "Please enter a username, password and zipcode.",
+    '100004'     => "The username you requested already exists on this site. Please try another."
 );

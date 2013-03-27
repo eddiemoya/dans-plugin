@@ -406,7 +406,7 @@ class SSO {
 						var_dump($e);
 						exit;*/
 						
-						$this->error_redirect('Systems error occurred on login.');
+						$this->error_redirect('100000');
 					}
 						
 				}
@@ -505,7 +505,7 @@ class SSO {
 							
 					} else {
 						
-						$this->error_redirect('There was an issue with the Authentication provider, please try again.SSO');
+						$this->error_redirect('100001');
 					}
 					
 				}
@@ -554,7 +554,7 @@ class SSO {
 		
 		if((! $username || empty($username)) || (! $password) || empty($password)) {
 			 
-			$this->error_redirect('Please enter a username and password.');
+			$this->error_redirect('100002');
 		}
 		
 		//Set query params and action
@@ -705,7 +705,7 @@ class SSO {
 		
 		if(empty($username) || empty($password) || empty($zipcode)) {
 			
-			$this->error_redirect('Please enter a username, password and zipcode.');
+			$this->error_redirect('100003');
 		}
 		
 			$this->set_query('sourceSiteid', $this->_sid)
@@ -770,12 +770,11 @@ class SSO {
 			exit;*/
 			
 			if($this->_login_page == '') die('No Login page configured.');
-			
-			return $sso_errors[$_POST['errorCode']];
+		
+			return $_POST['errorCode'];
 		}
 		
 			return false;
-		
 	}
 
 	/**
@@ -853,7 +852,7 @@ class SSO {
 						//Check for errors	 
 		 				if(is_wp_error($user_id)) {
 		 					
-		 					$this->error_redirect('The username you requested already exists on this site. Please try another.');
+		 					$this->error_redirect('100004');
 		 				}
 		 				
 	 				//Insert sso_guid user meta
@@ -1022,6 +1021,8 @@ class SSO {
      */
     private function error_redirect($msg) {
     	
+  		include_once(include SHCSSO_CONFIG_DIR . 'errors.php');
+
     	header('HTTP/1.1 301 Moved Permanently');
     	header('Location: ' . $this->url_append_qs('err=' . urlencode($msg) . '&origin=' . $_GET['origin'], $this->_login_page));
 		exit;
@@ -1029,6 +1030,8 @@ class SSO {
     
 	private function error_register_redirect($msg) {
     	
+		include_once(include SHCSSO_CONFIG_DIR . 'errors.php');
+
 		header('HTTP/1.1 301 Moved Permanently');
     	header('Location: ' . $this->url_append_qs('err=' . urlencode($msg) . '&origin=' . $_GET['origin'], $this->_register_page));
 		exit;
