@@ -301,7 +301,7 @@ class SSO_Profile {
 					->set_action(__METHOD__)
 					->set_method('POST')
 					->execute();
-					
+			
 		if(empty($xml)) {
 			
 			return array('code' => '200', 'message' => 'An e-mail has been sent to the address you provided. Please follow the instructions in the e-mail to reset your password.');
@@ -319,7 +319,14 @@ class SSO_Profile {
 					
 					include SHCSSO_CONFIG_DIR . 'errors.php';
 					
-					return array('code' => $user->code, 'message' => $sso_errors[$user->code]);
+					if($user->code == '404') {
+						
+						return array('code'	=> $user->code, 'message' => 'The e-mail address you entered was not found. Please try again.');
+						
+					} else {
+					
+						return array('code' => $user->code, 'message' => $sso_errors[$user->code]);
+					}
 		}
 					
 	}
@@ -621,7 +628,7 @@ class SSO_Profile {
 	 */
 	private function set_action($method) {
 		
-		$method = ltrim($method, __CLASS__ . '::');
+		$method = str_replace(__CLASS__ . '::', '', $method);
 		$this->_action = $this->_actions[$method];
 		
 		return $this;
@@ -696,7 +703,6 @@ class SSO_Profile {
 	private function execute() {
 		
 		$url = $this->create_url();
-		
 		
 		$options = array(
 			
