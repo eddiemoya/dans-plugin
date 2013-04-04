@@ -369,7 +369,16 @@ class SSO_Profile {
 					
 					$code = (string) $user->code;
 					
-					return array('code' => $code, 'message' => $sso_errors[$code]);
+					if($code == '500.115') {
+						
+						return array('code' => $code, 'message' => 'You\'ve already submitted your new password.');
+						
+					} else {
+						
+						return array('code' => $code, 'message' => $sso_errors[$code]);
+					}
+					
+					
 				}
 				
 					return array('code' => '200', 'message' => 'Your password has been successfully changed.');
