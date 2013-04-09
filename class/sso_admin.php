@@ -21,7 +21,8 @@ class SSO_Admin {
 		update_option(SHCSSO_OPTION_PREFIX . 'version', SHCSSO_VERSION);
 		update_option(SHCSSO_OPTION_PREFIX . 'settings', self::$options);
 		
-		$this->create_table();
+		//Create tables
+		//$this->create_table();
 	}
 	
 	public static function uninstall() {
