@@ -21,6 +21,11 @@ class SSO_User {
 	public $guid;
 	
 	/**
+	 * User's e-mail/ SSO username
+	 * @var string
+	 */
+	public $email;
+	/**
 	 * CIS Profile screen name.
 	 * @var string
 	 */
@@ -67,7 +72,14 @@ class SSO_User {
 		
 		if($guid !== false) {
 			
-			$this->get($guid);
+			if(is_object($guid)) {
+				
+				$this->get_by_object($guid);
+				
+			} else {
+				
+				$this->get($guid);
+			}
 		}
 		
 	}
@@ -79,9 +91,7 @@ class SSO_User {
 	
 	protected function get($guid) {
 		
-		global $wpdb;
-		
-		if($data = $wpdb->get_results("SELECT * FROM {$wpdb->base_prefix}sso_users WHERE guid = {$guid}", ARRAY_A)) {
+		if($data = $this->_guid($guid)) {
 			
 			$this->set($data[0]);
 			$this->set('guid', (string) $guid);
@@ -91,6 +101,34 @@ class SSO_User {
 			
 			$this->is_new = true;
 		}
+		
+	}
+	
+	protected function _guid($guid) {
+		
+		global $wpdb;
+		return $wpdb->get_results("SELECT * FROM {$wpdb->base_prefix}sso_users WHERE guid = {$guid}", ARRAY_A);
+	}
+	
+	/**
+	 * Extracts data from SimpleXMLElement Object from SSO Auth validation response.
+	 * @param object $guid
+	 */
+	public function get_by_object(SimpleXMLElement $obj) {
+		
+		$this->set(array('email'	=> $obj->authenticationSuccess->user,
+						'guid'		=> $obj->authenticationSuccess->attributes->guid));
+		
+		if($data = $this->_guid($this->guid)) {
+			
+			$this->set($data[0]);
+			$this->updated = false;
+			
+		} else {
+			
+			$this->is_new = true;
+		}
+		
 		
 	}
 	
@@ -160,6 +198,10 @@ class SSO_User {
 		
 		$this->updated = false;
 		$this->is_saved = true;
+		
+	}
+	
+	protected function _create() {
 		
 	}
 	
