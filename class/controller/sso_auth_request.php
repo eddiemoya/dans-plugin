@@ -79,6 +79,14 @@ class SSO_Auth_Request extends SSO_Base_Request {
  				//Use SSO_User
  				$user = SSO_User::factory($response);
  				
+ 				//If not a new user, check for location and screen name updates
+ 				if(! $user->is_new) {
+ 					
+ 					$user->update_screen_name();
+ 					$user->update_location();
+ 				}
+ 				
+ 				//if there was problem creating new user
  				if($user->is_new && ! $user->created) {
  					
  					SSO_Utils::view('error', array('msg' => 'There was an issue creating new user.'));
@@ -88,6 +96,7 @@ class SSO_Auth_Request extends SSO_Base_Request {
  				//Save data
  				$user->save();
  				
+ 				//If there was an issue saving the user data
  				if(! $user->is_saved) {
  					
  					SSO_Utils::view('error', array('msg' => 'There was an issue saving user data.'));
@@ -95,7 +104,7 @@ class SSO_Auth_Request extends SSO_Base_Request {
  					
  				}
  				
- 				//Log in
+ 				//Log user in (WP)
  				$user->login();
  				
  				

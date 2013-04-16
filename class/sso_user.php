@@ -293,11 +293,34 @@ class SSO_User {
 	
 	public function update_screen_name() {
 		
-		
+		if(! $this->_profile_data || isset($this->_profile_data['error'])) 
+			$this->_profile_data = SSO_Profile_Request::factory()->get($this->guid);
+			
+		if(! isset($this->_profile_data['error']) && ($this->_profile_data['screenname'] != $this->screen_name)) {
+			$this->screen_name = $this->_profile_data['screenname'];
+			$this->_update_user_nicename($this->user_id, $this->screen_name);
+		}
 	}
 	
 	public function update_location() {
 		
+		if(! $this->_profile_data || isset($this->_profile_data['error']))
+			$this->_profile_data = SSO_Profile_Request::factory()->get($this->guid);
+			
+		if(! isset($this->_profile_data['error']) && ($this->zipcode != $this->_profile_data['zipcode'])) {
+			$this->zipcode = $this->_profile_data['zipcode'];
+			
+			//Get new city, state\
+			$location = User_Location::factory()->get($this->zipcode)
+												->response;
+			
+			if($location) {
+				
+				$this->city = $location['city'];
+				$this->state = $location['state'];
+			}
+		}
+			
 	}
 	
 	/**
