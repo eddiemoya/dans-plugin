@@ -77,10 +77,30 @@ class SSO_Auth_Request extends SSO_Base_Request {
 				 				->_execute(true);	
 				 				
  				//Use SSO_User
+ 				$user = SSO_User::factory($response);
  				
-				 //1. add create() to SSO_User for new users -- also add functionality to pass object to constructor of SSO_User
-				 //2. add password_gen to SSO Users
-				 //3. add login() to SSO_User
+ 				if($user->is_new && ! $user->created) {
+ 					
+ 					SSO_Utils::view('error', array('msg' => 'There was an issue creating new user.'));
+ 					return;
+ 				}
+ 				
+ 				//Save data
+ 				$user->save();
+ 				
+ 				if(! $user->is_saved) {
+ 					
+ 					SSO_Utils::view('error', array('msg' => 'There was an issue saving user data.'));
+ 					return;
+ 					
+ 				}
+ 				
+ 				//Log in
+ 				$user->login();
+ 				
+ 				
+ 				
+ 				
 				 //4. Add something to remove iframe -- probably out put some JS
 				
 			} else {

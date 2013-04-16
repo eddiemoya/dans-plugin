@@ -89,6 +89,11 @@ class User_Location {
 		
 	}
 	
+	public static function factory() {
+		
+		return new User_Location();
+	}
+	
 	/**
 	 * Given a zipcode will make request to service. Sets _zipcode property.
 	 * 

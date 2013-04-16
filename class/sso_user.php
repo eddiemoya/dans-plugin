@@ -62,10 +62,32 @@ class SSO_User {
 	protected $updated = false;
 	
 	/**
+	 * The WP role to use when creating new WP user from SSO User.
+	 * Set from plugin option. Defaults to subscriber.
+	 * 
+	 * @var string
+	 */
+	protected $_default_role = 'subscriber';
+	
+	/**
+	 * Holds data from CAS get() call.
+	 * @var array
+	 */
+	protected $_profile_data;
+	
+	/**
 	 * Indicates if the user's data has been saved to database.
 	 * @var bool
 	 */
 	public $is_saved = false;
+	
+	/**
+	 * Indicates if new WP User was created successfully.
+	 * @var bool
+	 */
+	public $created = false;
+	
+	
 	
 	
 	public function __construct($guid = false) {
@@ -82,8 +104,15 @@ class SSO_User {
 			}
 		}
 		
+		$this->_default_role = SSO_Utils::options('sso_role');
+		
 	}
-	
+	/**
+	 * The WP role to use when creating new WP user from SSO User.
+	 * Set from plugin option. Defaults to subscriber.
+	 * 
+	 * @var string
+	 */
 	public static function factory($guid = false) {
 		
 		return new SSO_User($guid);
@@ -97,9 +126,10 @@ class SSO_User {
 			$this->set('guid', (string) $guid);
 			$this->updated = false;
 			
-		} else {
+		} else { //Create new user
 			
 			$this->is_new = true;
+			$this->_create();
 		}
 		
 	}
@@ -124,11 +154,11 @@ class SSO_User {
 			$this->set($data[0]);
 			$this->updated = false;
 			
-		} else {
+		} else { //Create new user
 			
 			$this->is_new = true;
+			$this->_create();
 		}
-		
 		
 	}
 	
@@ -203,7 +233,141 @@ class SSO_User {
 	
 	protected function _create() {
 		
+		//Create wp user
+ 		$user_id = wp_insert_user(array('user_pass'		=> $this->_random(),
+							 			'user_email'	=> $this->email,
+							 			'user_login'	=> $this->email,
+							 			'user_role'		=> $this->_default_role));
+ 		
+ 		if(is_wp_error($user_id)) {
+ 			
+ 			$this->created = false;
+ 			return false;
+ 		}
+ 		
+ 		$this->user_id = $user_id;
+ 		
+ 		//Get screen name / update screen name
+ 		$user_data = SSO_Profile_Request::factory()->get($this->guid);
+ 		
+ 		if(! isset($user_data['error'])) {
+ 			
+ 			$this->screen_name = $user_data['screenname'];
+ 			$this->zipcode = $user_data['zipcode'];
+ 			
+ 			$this->_update_user_nicename($this->user_id, $this->screen_name);
+ 			
+ 			//Get Location/ update location
+			$location = User_Location::factory()->get($this->zipcode)
+												->response;
+												
+				if($location) {
+					
+					$this->city = $location['city'];
+					$this->state = $location['state'];
+				}
+ 		}
+ 		
+ 		$this->created = true;
+ 		return true;
 	}
+	
+	public function login() {
+		
+		wp_set_current_user($this->user_id, $this->email);
+ 		wp_set_auth_cookie($this->user_id);
+ 		do_action('wp_login', $this->email);
+	}
+	
+	protected function _update_user_nicename($uid, $name) {
+		
+		global $wpdb;
+		$user = $wpdb->base_prefix . 'users';
+	
+		$update = $wpdb->update($user, 
+								array('user_nicename' => $name),
+								array('ID' => $uid));
+						
+		return ($update) ? true : false;
+	}
+	
+	public function update_screen_name() {
+		
+		
+	}
+	
+	public function update_location() {
+		
+	}
+	
+	/**
+	 * Creates a random string used to create password for new WP user.
+	 * 
+	 * @param string $type - the type of string you want to create (see switch)
+	 * @param int $length - length ofng to random string to return
+	 * @return string - random string
+	 * @access private
+	 */
+	private function _random($type = NULL, $length = 8) {
+		
+        if ($type === NULL)
+        {
+            // Default is to generate an alphanumeric string
+            $type = 'alnum';
+        }
+
+        switch ($type)
+        {
+            case 'alnum':
+                $pool = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            break;
+            case 'alpha':
+                $pool = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            break;
+            case 'hexdec':
+                $pool = '0123456789abcdef';
+            break;
+            case 'numeric':
+                $pool = '0123456789';
+            break;
+            case 'nozero':
+                $pool = '123456789';
+            break;
+            case 'distinct':
+                $pool = '2345679ACDEFHJKLMNPRSTUVWXYZ';
+            break;
+        }
+
+        // Split the pool into an array of characters
+        $pool = str_split($pool, 1);
+
+        // Largest pool key
+        $max = count($pool) - 1;
+
+        $str = '';
+        for ($i = 0; $i < $length; $i++)
+        {
+            // Select a random character from the pool and add it to the string
+            $str .= $pool[mt_rand(0, $max)];
+        }
+
+        // Make sure alnum strings contain at least one letter and one digit
+        if ($type === 'alnum' AND $length > 1)
+        {
+            if (ctype_alpha($str))
+            {
+                // Add a random digit
+                $str[mt_rand(0, $length - 1)] = chr(mt_rand(48, 57));
+            }
+            elseif (ctype_digit($str))
+            {
+                // Add a random letter
+                $str[mt_rand(0, $length - 1)] = chr(mt_rand(65, 90));
+            }
+        }
+
+        return $str;
+    }
 	
 	
 }

@@ -80,7 +80,14 @@ class SSO_Base_Request {
 	
 	protected function _query($name, $value) {	
 		
-		$this->_query[$key] = $value;
+		$this->_query[$name] = $value;
+		
+		return $this;
+	}
+	
+	protected function _post($data) {
+		
+		$this->_post = $data;
 		
 		return $this;
 	}
@@ -89,6 +96,13 @@ class SSO_Base_Request {
 	protected function _url() {
 		
 		$this->url = $this->_endpoint . $this->_action . ((count($this->_query)) ? '?' . http_build_query($this->_query) : '');
+		
+		return $this;
+	}
+	
+	protected function _method($method) {
+		
+		$this->_method = $method;
 		
 		return $this;
 	}
@@ -102,5 +116,37 @@ class SSO_Base_Request {
 	    $xml = new \SimpleXmlElement($xml);
 	    
 	    return $xml->children('http://www.yale.edu/tp/cas');
+	}
+	
+	/**
+	 * Given an array of user data, adds data to SimpleXMLElement object
+	 * 
+	 * @param array $data - array of user profile data
+	 * @param object $xml - SimpleXMLElement object.
+	 * @see update()
+	 * @return void
+	 * @access protected
+	 */
+	protected function _to_xml(array $data, $xml) {
+		
+		foreach ($data as $key => $value) {
+			
+	            if (is_array($value)) 
+	            {
+	                if ( ! is_numeric($key)) {
+	                	
+	                    $sub = $xml->addChild($key);
+	                  	$this->to_xml($value, $sub);
+	                   
+	                } else {
+	                	
+	                    $this->to_xml($value, $xml);
+	                }
+	            }
+	            else
+	            {
+	                $xml->addChild($key, $value);
+	            }
+	        }
 	}
 }

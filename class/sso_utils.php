@@ -61,26 +61,26 @@ class SSO_Utils {
 			
 		} else {
 			
-		//Get all sub-dirs in class root dir
-		$dirs = scandir($class_dir);
-		
-		if($dirs) {
+			//Get all sub-dirs in class root dir
+			$dirs = scandir($class_dir);
 			
-			$exclude = array('...', '..', '.');
-			
-			foreach($dirs as $dir) {
+			if($dirs) {
 				
-				if(is_dir($class_dir . $dir) && ! in_array($dir, $exclude)) {
+				$exclude = array('...', '..', '.');
+				
+				foreach($dirs as $dir) {
 					
-					if(is_file($class_dir . $dir . '/' . $file)) {
+					if(is_dir($class_dir . $dir) && ! in_array($dir, $exclude)) {
 						
-						require_once $class_dir . $dir . '/' . $file;
-						return;
+						if(is_file($class_dir . $dir . '/' . $file)) {
+							
+							require_once $class_dir . $dir . '/' . $file;
+							return;
+						}
 					}
+						
 				}
-					
 			}
-		}
 		
 		}
 	
@@ -163,6 +163,26 @@ class SSO_Utils {
 		
 	}
 	
+	public static function config($file, $key=null) {
+		
+		$file = SHCSSO_CONFIG_DIR . $file . '.php';
+		
+		if(is_file($file)) {
+			
+			$out = require_once $file;
+			
+			if($key) {
+				
+				return (is_array($out) && isset($out[$key])) ? $out[$key] : null;
+				
+			} else {
+				
+				return $out;
+			}
+		}
+		
+		return null;
+	}
 	
 	/**
 	 * init() - Used to instantiate objects of classes with init hooks (ie. Admin stuff)
@@ -178,7 +198,7 @@ class SSO_Utils {
 		}
 	}
 	
-	public static function load_widgets() {
+	/*public static function load_widgets() {
 		
 		$widgets = scandir(SHC_RR_WIDGETS);
 		
@@ -199,7 +219,7 @@ class SSO_Utils {
 			return $out;
 		}
 		
-	}
+	}*/
 	
 	public static function install() {
 			
