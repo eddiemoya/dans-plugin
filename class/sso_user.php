@@ -266,6 +266,7 @@ class SSO_User {
 					$this->city = $location['city'];
 					$this->state = $location['state'];
 				}
+				
  		}
  		
  		$this->created = true;
@@ -310,7 +311,7 @@ class SSO_User {
 		if(! isset($this->_profile_data['error']) && ($this->zipcode != $this->_profile_data['zipcode'])) {
 			$this->zipcode = $this->_profile_data['zipcode'];
 			
-			//Get new city, state\
+			//Get new city, state
 			$location = User_Location::factory()->get($this->zipcode)
 												->response;
 			

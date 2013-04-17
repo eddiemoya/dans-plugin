@@ -14,7 +14,8 @@ class SSO_Auth_Request extends SSO_Base_Request {
 							 	'_register' 		=> 'shcRegistration',
 								'_logout'			=> 'logout',
 							  	'_validate'			=> 'serviceValidate',
-							  	'_openid'			=> 'shcOpenIdLogin');
+							  	'_openid'			=> 'shcOpenIdLogin',
+								'_logout_execute'	=> '');
 	
 	
 	
@@ -46,6 +47,13 @@ class SSO_Auth_Request extends SSO_Base_Request {
 	
 	protected function _login() {
 		
+		//Make sure user submitted username and password.
+		if(empty(trim($_REQUEST['logonPassword'])) || empty(trim($_REQUEST['loginId']))) {
+			
+			SSO_Utils::view('error', array('msg' => 'Please enter both a username and a password.'));
+			exit;
+		}
+		
 		$this->_url();
 		
 		SSO_Utils::view('login', array('url'				=> $this->url,
@@ -69,7 +77,7 @@ class SSO_Auth_Request extends SSO_Base_Request {
 			
 		} else {
 			
-			if(isset($_POST['ticket'])) {
+			if(isset($_POST['ticket'])) { //Validate ticket
 				
 				$response = $this->_query('ticket', $_POST['ticket'])
 				 				->_query('service', SHCSSO_SERVICE_URL . '?' . SHCSSO_QUERYSTRING_PARAM . '=_validate')
@@ -90,7 +98,7 @@ class SSO_Auth_Request extends SSO_Base_Request {
  				if($user->is_new && ! $user->created) {
  					
  					SSO_Utils::view('error', array('msg' => 'There was an issue creating new user.'));
- 					return;
+ 					exit;
  				}
  				
  				//Save data
@@ -100,21 +108,20 @@ class SSO_Auth_Request extends SSO_Base_Request {
  				if(! $user->is_saved) {
  					
  					SSO_Utils::view('error', array('msg' => 'There was an issue saving user data.'));
- 					return;
- 					
+ 					exit;
  				}
  				
  				//Log user in (WP)
  				$user->login();
  				
- 				
- 				
- 				
-				 //4. Add something to remove iframe -- probably out put some JS
+ 				//echo view (JS) to refresh parent
+ 				SSO_Utils::view('login_complete', array());
+ 				exit;
 				
-			} else {
+			} else { //No ticket, spawn error
 				
-				//Error - no ticket
+				SSO_Utils::view('error', array('msg' => 'A ticket was not recieved from CAS.'));
+				exit;
 			}
 			
 		}
@@ -123,9 +130,36 @@ class SSO_Auth_Request extends SSO_Base_Request {
 	
 	protected function _register() {
 		
+		if(empty($_REQUEST['loginId']) || empty($_REQUEST['logonPassword']) || empty($_REQUEST['zipcode'])) {
+			
+			SSO_Utils::view('error', array('msg' => 'Please enter your e-mail, password, and zipcode.'));
+			exit;
+		}
+		
+		$this->_url();
+		
+		SSO_Utils::view('register', array('url'				=> $this->url,
+										'logonPassword'		=> $_REQUEST['logonPassword'],
+										'loginId'			=> $_REQUEST['loginId'],
+										'zipcode'			=> $_REQUEST['zipcode'],
+										'service'			=> SHCSSO_SERVICE_URL . '?' . SHCSSO_QUERYSTRING_PARAM . '=_validate',
+										'sourceSiteid'		=> $_REQUEST['sourceSiteid']
+										));
+		
+		
+		
 	}
 	
 	protected function _logout() {
+		
+		$this->_query('service', SHCSSO_SERVICE_URL . '?' . SHCSSO_QUERYSTRING_PARAM . '=_logout_execute')
+			->_url();
+		
+		SSO_Utils('logout', array())
+		
+	}
+	
+	protected function _logout_execute() {
 		
 	}
 	
