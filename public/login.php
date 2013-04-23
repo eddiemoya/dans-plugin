@@ -1,4 +1,6 @@
-<?php
-//sso_action qs param needs to be '_login'
+<?php //Handles login and registration
+
+$file =  substr(__FILE__, 0, (stripos(__FILE__, 'wordpress/') + 10)) . 'wp-load.php';
+require_once $file;
 
 SSO_Auth_Request::factory()->process();

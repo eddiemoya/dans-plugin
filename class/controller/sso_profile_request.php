@@ -97,6 +97,7 @@ class SSO_Profile_Request extends SSO_Base_Request {
 		$this->_sid = $options['profile_site_id'];
 		$this->_key = $options['profile_key'];
 		
+		$this->_endpoint();
 		$this->_set_timestamp();
 		$this->_create_digital_signature();
 		
@@ -473,6 +474,17 @@ class SSO_Profile_Request extends SSO_Base_Request {
 		$this->_action = $this->_actions[$method];
 
 		return $this;
+	}
+	
+	/**
+	 * Sets _endpoint property (in parent).
+	 * 
+	 * @param void
+	 * @return void
+	 */
+	protected function _endpoint() {
+		
+		$this->_endpoint = $this->_endpoints[$this->_environment];
 	}
 	
 	/**

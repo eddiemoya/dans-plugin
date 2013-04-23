@@ -22,7 +22,7 @@ class SSO_Base_Request {
 		$this->_environment = SSO_Utils::options('environment');
 	}
 	
-	protected function _execute($object=false) {
+	protected function _execute($object=false, $format='xml') {
 		
 		$options = array(CURLOPT_URL            => $this->url,
 			            CURLOPT_RETURNTRANSFER  => TRUE,
@@ -74,8 +74,29 @@ class SSO_Base_Request {
             throw new Exception('Error fetching remote '.$url.' [ status '.$code.' ] '.$error);
         }
 
-        return ($object) ? $this->_xml_to_object($response)  : $response;
-		
+ 
+		//Return response		
+        if($object) { //Convert response to object
+        	
+        	switch($format) {
+        		
+        		case 'xml':
+        			
+        				return $this->_xml_to_object($response);
+        				
+        			break;
+        				
+        		case 'json':
+        			
+        				return json_decode($response);
+        			
+        			break;
+        	}
+        	
+        } else { //Return the raw response from call (xml or json)
+        	
+        	return $response;
+        }
 	}
 	
 	protected function _query($name, $value) {	
@@ -106,6 +127,7 @@ class SSO_Base_Request {
 		
 		return $this;
 	}
+	
 	
 	protected function _xml_to_object($xml) {
 		

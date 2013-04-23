@@ -168,7 +168,11 @@ class SSO {
 			}*/
 			
 			//Instantiate OpenID_RPX object
-			$this->_openid_rpx = new OpenID_RPX;
+			
+			/**
+			 * Commented out while developing maint/sso_v2
+			 */
+			//$this->_openid_rpx = new OpenID_RPX;
 			
 			//Used to set JS var on SSO login check
 			session_start();

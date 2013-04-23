@@ -23,6 +23,7 @@ class SSO_Auth_Request extends SSO_Base_Request {
 		
 		parent::__construct();
 		$this->_set_action();
+		$this->_endpoint();
 		
 	}
 	
@@ -33,7 +34,7 @@ class SSO_Auth_Request extends SSO_Base_Request {
 	
 	public function process() {
 		
-		$this->{$this->request_type}();
+		$this->{$this->_request_type}();
 		
 	}
 	
@@ -48,7 +49,7 @@ class SSO_Auth_Request extends SSO_Base_Request {
 	protected function _login() {
 		
 		//Make sure user submitted username and password.
-		if(empty(trim($_REQUEST['logonPassword'])) || empty(trim($_REQUEST['loginId']))) {
+		if(empty($_REQUEST['logonPassword']) || empty($_REQUEST['loginId'])) {
 			
 			SSO_Utils::view('error', array('msg' => 'Please enter both a username and a password.'));
 			exit;
@@ -115,7 +116,7 @@ class SSO_Auth_Request extends SSO_Base_Request {
  				$user->login();
  				
  				//echo view (JS) to refresh parent
- 				SSO_Utils::view('login_complete', array());
+ 				SSO_Utils::view('refresh', array());
  				exit;
 				
 			} else { //No ticket, spawn error
@@ -155,16 +156,15 @@ class SSO_Auth_Request extends SSO_Base_Request {
 		$this->_query('service', SHCSSO_SERVICE_URL . '?' . SHCSSO_QUERYSTRING_PARAM . '=_logout_execute')
 			->_url();
 		
-		SSO_Utils('logout', array())
+		SSO_Utils('redirect', array('url' => $this->url));
 		
 	}
 	
 	protected function _logout_execute() {
 		
-	}
-	
-	protected function _action() {
+		wp_logout();
 		
+		SSO_Utils::view('refresh', array());
 	}
 	
 	protected function _error() {
