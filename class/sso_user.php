@@ -1,5 +1,13 @@
 <?php
-
+/**
+ * SSO_User (Model) 
+ * 
+ * Gets, sets and updates sso user data in the database. 
+ * Creates 
+ * 
+ * @author Dan Crimmins
+ *
+ */
 class SSO_User {
 	
 	/**
@@ -53,13 +61,13 @@ class SSO_User {
 	  * Indicates if this a new user record.
 	  * @var bool
 	  */
-	protected $is_new = false;
+	public $is_new = false;
 	
 	/**
 	 * Indicates if an update via set() has been made to object.
 	 * @var bool
 	 */
-	protected $updated = false;
+	public $updated = false;
 	
 	/**
 	 * The WP role to use when creating new WP user from SSO User.
@@ -89,7 +97,14 @@ class SSO_User {
 	
 	
 	
-	
+	/**
+	 * Constructor - $guid can be the guid or the SimpleXMLElement
+	 * from SSO CAS validation method. 
+	 *  
+	 * @access public
+	 * @param mixed [strng | object SimpleXMLElement] $guid
+	 * @return void
+	 */
 	public function __construct($guid = false) {
 		
 		if($guid !== false) {
@@ -102,22 +117,28 @@ class SSO_User {
 				
 				$this->get($guid);
 			}
-		}
+			
+		} 
 		
 		$this->_default_role = SSO_Utils::options('sso_role');
 		
 	}
+	
 	/**
-	 * The WP role to use when creating new WP user from SSO User.
-	 * Set from plugin option. Defaults to subscriber.
+	 * Factory
 	 * 
-	 * @var string
+	 * @param string $guid
+	 * @return object - instance of this object
 	 */
 	public static function factory($guid = false) {
 		
 		return new SSO_User($guid);
 	}
 	
+	/**
+	 * Gets user data by either guid or object (response from
+	 * @param unknown_type $guid
+	 */
 	protected function get($guid) {
 		
 		if($data = $this->_guid($guid)) {
@@ -134,6 +155,12 @@ class SSO_User {
 		
 	}
 	
+	/**
+	 * Retrieves user data from DB.
+	 * 
+	 * @param string $guid
+	 * @return mixed [array | bool]
+	 */
 	protected function _guid($guid) {
 		
 		global $wpdb;
@@ -141,13 +168,17 @@ class SSO_User {
 	}
 	
 	/**
-	 * Extracts data from SimpleXMLElement Object from SSO Auth validation response.
-	 * @param object $guid
+	 * Extracts data from SimpleXMLElement Object from SSO Auth validation response. Sets
+	 * properties and creates new user (if needed).
+	 * 
+	 * @access public
+	 * @param object SimpleXMLElement $guid
+	 * @return void
 	 */
 	public function get_by_object(SimpleXMLElement $obj) {
 		
-		$this->set(array('email'	=> $obj->authenticationSuccess->user,
-						'guid'		=> $obj->authenticationSuccess->attributes->guid));
+		$this->set(array('email'	=> (string) $obj->authenticationSuccess->user,
+						'guid'		=> (string) $obj->authenticationSuccess->attributes->guid));
 		
 		if($data = $this->_guid($this->guid)) {
 			
@@ -162,6 +193,13 @@ class SSO_User {
 		
 	}
 	
+	/**
+	 * Retrieves user data by WP user_id and sets properties.
+	 * 
+	 * @access public
+	 * @param int $user_id
+	 * @return object - an instance of this object
+	 */
 	public function get_by_id($user_id) {
 		
 		global $wpdb;
@@ -174,7 +212,14 @@ class SSO_User {
 		return $this;
 	}
 	
-	
+	/**
+	 * Sets objects properties. $name can be a string or an array. Sets $updated to true.
+	 *
+	 * @access public
+	 * @param mixed [string | array] $name
+	 * @param string $value
+	 * @return object - instance of this object
+	 */
 	public function set($name, $value = null) {
 		
 		if(is_array($name)) {
@@ -196,11 +241,18 @@ class SSO_User {
 		return $this;
 	}
 	
+	/**
+	 * Inserts or updates user's DB record.
+	 * 
+	 * @access public
+	 * @param void
+	 * @return void
+	 */
 	public function save() {
 		
 		global $wpdb;
 		
-		if($this->is_new) {
+		if($this->is_new) { //New User - insert into db
 			
 			$wpdb->insert($wpdb->base_prefix . 'sso_users',
 							  array('user_id' 		=> $this->user_id,
@@ -212,7 +264,7 @@ class SSO_User {
 			
 		} else {
 			
-			if($this->id) {
+			if($this->id) { //Existing User - update db record
 				
 				$wpdb->update($wpdb->base_prefix . 'sso_users',
 								array('screen_name'	=> $this->screen_name,
@@ -231,6 +283,13 @@ class SSO_User {
 		
 	}
 	
+	/**
+	 * Creates new WP user. Sets $user_id, $screen_name, $city, $state properties.
+	 * 
+	 * @access public 
+	 * @param void
+	 * @return bool - true if user created successfully.
+	 */
 	protected function _create() {
 		
 		//Create wp user
@@ -238,6 +297,7 @@ class SSO_User {
 							 			'user_email'	=> $this->email,
 							 			'user_login'	=> $this->email,
 							 			'user_role'		=> $this->_default_role));
+ 		
  		
  		if(is_wp_error($user_id)) {
  			
@@ -249,6 +309,7 @@ class SSO_User {
  		
  		//Get screen name / update screen name
  		$user_data = SSO_Profile_Request::factory()->get($this->guid);
+ 		
  		
  		if(! isset($user_data['error'])) {
  			
@@ -273,6 +334,13 @@ class SSO_User {
  		return true;
 	}
 	
+	/**
+	 * Performs WP login.
+	 * 
+	 * @access public
+	 * @param void
+	 * @return void
+	 */
 	public function login() {
 		
 		wp_set_current_user($this->user_id, $this->email);
@@ -280,6 +348,14 @@ class SSO_User {
  		do_action('wp_login', $this->email);
 	}
 	
+	/**
+	 * Updates user's nicename field in wp_users table.
+	 * 
+	 * @access protected
+	 * @param int $uid - WP user_id
+	 * @param string $name - nicename to set
+	 * @return bool - true on success, false on fail.
+	 */
 	protected function _update_user_nicename($uid, $name) {
 		
 		global $wpdb;
@@ -292,23 +368,40 @@ class SSO_User {
 		return ($update) ? true : false;
 	}
 	
+	/**
+	 * Checks if user's CIS profile screen name matches what we have locally. If not,
+	 * updates it locally.
+	 * 
+	 * @access public
+	 * @param void
+	 * @return void
+	 */
 	public function update_screen_name() {
 		
 		if(! $this->_profile_data || isset($this->_profile_data['error'])) 
 			$this->_profile_data = SSO_Profile_Request::factory()->get($this->guid);
-			
+		
 		if(! isset($this->_profile_data['error']) && ($this->_profile_data['screenname'] != $this->screen_name)) {
 			$this->screen_name = $this->_profile_data['screenname'];
 			$this->_update_user_nicename($this->user_id, $this->screen_name);
 		}
 	}
 	
+	/**
+	 * Checks if user's CIS zipcode matches what we store locally, if not updates it locally.
+	 * Also, updates city and state.
+	 * 
+	 * @access public
+	 * @param void
+	 * @return void
+	 */
 	public function update_location() {
 		
 		if(! $this->_profile_data || isset($this->_profile_data['error']))
 			$this->_profile_data = SSO_Profile_Request::factory()->get($this->guid);
 			
 		if(! isset($this->_profile_data['error']) && ($this->zipcode != $this->_profile_data['zipcode'])) {
+			
 			$this->zipcode = $this->_profile_data['zipcode'];
 			
 			//Get new city, state
@@ -328,7 +421,7 @@ class SSO_User {
 	 * Creates a random string used to create password for new WP user.
 	 * 
 	 * @param string $type - the type of string you want to create (see switch)
-	 * @param int $length - length ofng to random string to return
+	 * @param int $length - length of random string to return
 	 * @return string - random string
 	 * @access private
 	 */

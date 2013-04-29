@@ -1,5 +1,13 @@
 <?php
-
+/**
+ * SSO_Openid_Request (Controller)
+ * 
+ * Controller used to process OpenID Provider logins.
+ * 
+ * @author Dan Crimmins
+ * @uses SSO_Base_Request
+ *
+ */
 class SSO_Openid_Request extends SSO_Base_Request {
 	
 	/**
@@ -7,8 +15,8 @@ class SSO_Openid_Request extends SSO_Base_Request {
 	 * @var array
 	 */
 	protected $_endpoints = array('production'	=> 'https://signin.shld.net/api/v2/',
-								'qa'			=> 'https://rpxnow.com/api/v2/',
-								'integration'	=> 'https://rpxnow.com/api/v2/');
+									'qa'			=> 'https://rpxnow.com/api/v2/',
+									'integration'	=> 'https://rpxnow.com/api/v2/');
 	
 	/**
 	 * Array of api keys based on environment
@@ -27,13 +35,13 @@ class SSO_Openid_Request extends SSO_Base_Request {
 							  'map'				=> 'map');
 	
 	/**
-	 * API key
+	 * API key - defaults to production key
 	 * @var string
 	 */
 	private $_api_key = 'cb097f9ddff64676d5017df4c335d740ae7e9915';
 	
 	
-	
+	//_environment is set here
 	/**
 	 * Array of user data from OID response
 	 * @var array
@@ -41,19 +49,41 @@ class SSO_Openid_Request extends SSO_Base_Request {
 	public $user = array();
 	
 	
+	/**
+	 * Constructor
+	 * 
+	 * Calls parent constructor, sets $_endpoint based on $_environment (inherited),
+	 * sets $_api_key based on $_environment.
+	 */
 	public function __construct() {
 		
-		parent::__construct(); //_environment is set here
+		parent::__construct(); 
 		
 		$this->_endpoint();
+		$this->_api_key = $this->_api_keys[$this->_environment];
 		
 	}
 	
+	/**
+	 * Factory
+	 * 
+	 * @access public
+	 * @param void
+	 * @return instance of this class
+	 */
 	public static function factory() {
 		
 		return new SSO_Openid_Request();
 	}
 	
+	/**
+	 * Handles token ($_POST['token']) returned from initial OpenID provider 
+	 * login request.
+	 * 
+	 * @access public
+	 * @param string $token
+	 * @return array - $user property
+	 */
 	public function auth_info($token = null) {
 		
 		if($token && strlen($token) == 40) {
@@ -64,8 +94,11 @@ class SSO_Openid_Request extends SSO_Base_Request {
 									 			'apiKey'		=> $this->_api_key,
 									 			'format'		=> 'json',
 									 			'extended'		=> 'true'))
+								->_url()
 								->_execute(true, 'json');
-								
+							
+
+			//Set $user property with data from response
 			$this->_user($response);
 			
 			//Get user's CIS profile data
@@ -78,7 +111,7 @@ class SSO_Openid_Request extends SSO_Base_Request {
 				//User not found, create new SSO Profile user
 				$new_user = SSO_Profile_Request::factory()->create($this->user);
 				
-				return ($this->_map($new_user->id)) ? $this->user : false;
+				return ($this->_map((string) $new_user->id)) ? $this->user : false;
 						
 			} else { //SSO user exists
 				
@@ -87,14 +120,16 @@ class SSO_Openid_Request extends SSO_Base_Request {
 											
 		} else { //No token
 			
-			SSO_Utils::view('error', array('msg'		=> 'There was an issue with the authentication provider, please try again.',
+			SSO_Utils::view('error', array('msg'		=> 'No token received from OpenID provider.',
 											'close_OID'	=> true));
+			exit;
 		}
 		
 	}
 	
 	/**
-	 * Maps a GUID to OpenID provider
+	 * Maps a GUID to OpenID provider.
+	 * 
 	 * @param string - SSO GUID
 	 * @return bool
 	 */
@@ -106,13 +141,19 @@ class SSO_Openid_Request extends SSO_Base_Request {
 						 ->_query('identifier', $this->user['openid_id'])
 						 ->_query('primaryKey', $guid)
 						 ->_query('overwrite', 'false')
+						 ->_url()
 						 ->_execute(true, 'json');
 						 
 		return ($response->stat == 'ok') ? true : false; 
 		
 	}
 	
-	
+	/**
+	 * Sets $_action based on $method.
+	 * 
+	 * @param string $method - the method where this is called from.
+	 * @return object - instance of this object.
+	 */
 	protected function _set_action($method) {
 		
 		$method = str_replace(__CLASS__ . '::', '', $method);
@@ -121,12 +162,27 @@ class SSO_Openid_Request extends SSO_Base_Request {
 		return $this;	
 	}
 	
+	/**
+	 * Sets $_endpoint property based on $_envronment. (inherited)
+	 * 
+	 * @access protected
+	 * @param void
+	 * @return void
+	 */
 	protected function _endpoint() {
 		
 		$this->_endpoint = $this->_endpoints[$this->_environment];
 	}
 	
-	protected function _user(object $response) {
+	/**
+	 * Receives data from validation call from OpenID and puts
+	 * relavent data into $user property  (array)
+	 * 
+	 * @access protected 
+	 * @param stdClass $response
+	 * @return void
+	 */
+	protected function _user(stdClass $response) {
 		
 		if($response->stat == 'ok') { //Got a valid response, set user data
 			
@@ -157,23 +213,5 @@ class SSO_Openid_Request extends SSO_Base_Request {
 		}
 	
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-
-	
 	
 }

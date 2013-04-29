@@ -31,7 +31,7 @@ if ( ! defined('SHCSSO_VERSION'))
     define('SHCSSO_QUERYSTRING_PARAM', 'sso_action');
     
     //Public path and files
-    define('SHCSSO_PUBLIC_URL', WP_PLUGIN_URL . '/public/');
+    define('SHCSSO_PUBLIC_URL', WP_PLUGIN_URL . '/shc-sso-profile/public/');
 	define('SHCSSO_SERVICE_URL', SHCSSO_PUBLIC_URL . 'service.php');
 	define('SHCSSO_LOGIN_URL' , SHCSSO_PUBLIC_URL . 'login.php');
 	
@@ -41,10 +41,11 @@ if ( ! defined('SHCSSO_VERSION'))
 	//Register autoload function
     spl_autoload_register(array('SSO_Utils', 'autoload'));
     
-    
-    
-    add_action('init', array('SSO', 'init'), 1);
+    //Init
+    add_action('init', array('SSO_Utils', 'init'));
     add_action('init', array('SSO_Admin', 'init'));
+    
+    //Install/ Uninstall
     register_activation_hook(SHCSSO_FILE, array('SSO_Admin', 'install'));
     register_deactivation_hook(SHCSSO_FILE, array('SSO_Admin', 'uninstall'));
 }

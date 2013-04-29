@@ -28,7 +28,7 @@ class SSO_Utils {
 	 * @var array
 	 * @see init()
 	 */
-	public static $_classes = array('settings_admin'	=> 'RR_Admin_Settings');
+	public static $_classes = array();
 	/**
 	 * _option_name() - Sets $_option_name
 	 * 
@@ -196,6 +196,16 @@ class SSO_Utils {
 			
 			$$var = new $class();
 		}
+		
+		//Load OpenID JS - JSON with service URL
+		if(! is_user_logged_in()) {
+				
+			add_action('wp_head', array('SSO_Utils', 'load_openid_js'));
+		} 
+		
+		//Enqueue scripts
+		self::enqueue();
+			
 	}
 	
 	/*public static function load_widgets() {
@@ -220,6 +230,17 @@ class SSO_Utils {
 		}
 		
 	}*/
+	
+	public static function load_openid_js() {
+		
+		echo '<script type="text/javascript">var OID = '. json_encode(array('token_url' => SHCSSO_SERVICE_URL . '?' . SHCSSO_QUERYSTRING_PARAM . '=_openid')) .';</script>';
+	}
+	
+	public static function enqueue() {
+		
+		wp_register_script('sso-js', plugins_url('assets/js/', dirname(__FILE__)) . 'sso-js.js', array('jquery', 'shcJSL', 'moodle'), '1.0');
+		wp_enqueue_script('sso-js');
+	}
 	
 	public static function install() {
 			

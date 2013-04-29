@@ -97,6 +97,7 @@ class SSO_Profile_Request extends SSO_Base_Request {
 		$this->_sid = $options['profile_site_id'];
 		$this->_key = $options['profile_key'];
 		
+		$this->_environment = $options['environment'];
 		$this->_endpoint();
 		$this->_set_timestamp();
 		$this->_create_digital_signature();
@@ -124,11 +125,11 @@ class SSO_Profile_Request extends SSO_Base_Request {
 						->_query('sig', $this->digital_signature)
 						->_query('id', $sso_guid)
 						->_set_action(__METHOD__)
-						->_url()
+						->_url(false)
 						->_method('GET')
-						->_execute(true);
-				
-					
+						->_execute(true, 'xml', false);
+						
+			
 			//Check for error from CIS server
 			
 			if(isset($user->code)) {
@@ -139,6 +140,8 @@ class SSO_Profile_Request extends SSO_Base_Request {
 				
 			} catch (Exception $e) {
 				
+				var_dump($e);
+				exit;
 				return array('error' => 'An issue occured trying to retrieve data from CIS.');
 			}
 			
@@ -174,9 +177,9 @@ class SSO_Profile_Request extends SSO_Base_Request {
 					->_query('sig', $this->digital_signature)
 					->_post(array('pd' => $old_pwd, 'npd' => $new_pwd, 'id' => $sso_guid))
 					->_set_action(__METHOD__)
-					->_url()
+					->_url(false)
 					->_method('POST')
-					->_execute(true);
+					->_execute(true, 'xml', false);
 					
 		
 		if(isset($user->code)) {
@@ -206,7 +209,7 @@ class SSO_Profile_Request extends SSO_Base_Request {
 					->_query('logon', urlencode($email))
 					->_query('url', urlencode($this->_reset_pwd_page))
 					->_set_action(__METHOD__)
-					->_url()
+					->_url(false)
 					->_method('POST')
 					->_execute();
 					
@@ -218,7 +221,7 @@ class SSO_Profile_Request extends SSO_Base_Request {
 			
 				try {
 					
-					$user = $this->_xml_to_object($xml);
+					$user = $this->_xml_to_object($xml, false);
 					
 				} catch (Exception $e) {
 					
@@ -249,9 +252,9 @@ class SSO_Profile_Request extends SSO_Base_Request {
 							->_query('sig', $this->digital_signature)
 							->_post(array('pd' => $new_pwd, 'auth' => $auth_token))
 							->_action(__METHOD__)
-							->_url()
+							->_url(false)
 							->_method('POST')
-							->_execute(true);
+							->_execute(true, 'xml', false);
 					
 			} catch (Exception $e) {
 				
@@ -284,9 +287,9 @@ class SSO_Profile_Request extends SSO_Base_Request {
 						->_query('sig', $this->digital_signature)
 						->_query('email', $email)
 						->_set_action(__METHOD__)
-						->_url()
+						->_url(false)
 						->_method('GET')
-						->_execute(true);
+						->_execute(true, 'xml', false);
 						
 					
 				
@@ -326,9 +329,9 @@ class SSO_Profile_Request extends SSO_Base_Request {
 						->_query('sig', $this->digital_signature)
 						->_query('screenName', $screen_name)
 						->_set_action(__METHOD__)
-						->_url()
+						->_url(false)
 						->_method('GET')
-						->_execute(true);
+						->_execute(true, 'xml', false);
 					
 		
 			if($validate) {
@@ -394,9 +397,9 @@ class SSO_Profile_Request extends SSO_Base_Request {
 						->_query('sig', $this->digital_signature)
 						->_post($xml->asXML())
 						->_set_action(__METHOD__)
-						->_url()
+						->_url(false)
 						->_method('POST')
-						->_execute(true);
+						->_execute(true, 'xml', false);
 		
 		if(isset($output->code)) {
 	
@@ -450,9 +453,9 @@ class SSO_Profile_Request extends SSO_Base_Request {
 						->_query('openid', 'YES')
 						->_post($xml->asXML())
 						->_set_action(__METHOD__)
-						->_url()
+						->_url(false)
 						->_method('PUT')
-						->_execute(true);
+						->_execute(true, 'xml', false);
 						
 		
 		return $output;
@@ -523,7 +526,7 @@ class SSO_Profile_Request extends SSO_Base_Request {
 	private function _create_digital_signature() {
 		
 		$ds = 'sid=' . $this->_sid . 'ts=' . $this->timestamp;
-		$this->digital_signature = $this->ds_encrypt($ds);
+		$this->digital_signature = $this->_ds_encrypt($ds);
 	}
 
 	private function _set_timestamp() {
