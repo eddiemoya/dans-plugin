@@ -5,10 +5,10 @@
 //Also, can pass close_OID var to also have this optionally close OID login window
 <?php if(isset($close_OID) && $close_OID === true):?>
 
-	//window.close();
+	if(window.opener.document.getElementById('sso-error')) 
+			window.opener.document.getElementById('sso-error').innerHTML = '<?php echo $msg;?>';
 
-	if(document.getElementById('sso-error')) 
-			document.getElementById('sso-error').innerHTML = '<?php echo $msg;?>';
+	window.close();
 
 <?php else:?>
 

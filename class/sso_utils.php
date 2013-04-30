@@ -233,7 +233,7 @@ class SSO_Utils {
 	
 	public static function load_openid_js() {
 		
-		echo '<script type="text/javascript">var OID = '. json_encode(array('token_url' => SHCSSO_SERVICE_URL . '?' . SHCSSO_QUERYSTRING_PARAM . '=_openid')) .';</script>';
+		echo "\t<script type='text/javascript'>\n\t\tvar OID = ". json_encode(array('token_url' => SHCSSO_SERVICE_URL . '?' . SHCSSO_QUERYSTRING_PARAM . '=_openid')) .";\n\t\tvar SSO_ENV = '" . self::options('environment') ."'; \n\t\t</script>\n";
 	}
 	
 	public static function enqueue() {

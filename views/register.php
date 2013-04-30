@@ -1,4 +1,10 @@
 <html>
+	<head>
+		<script type="text/javascript">
+			//Put modal in loading state
+			parent.shcJSL.get(window).moodle("load");
+		</script>
+	</head>
 	<body onload="document.sso.submit();">
 	
 		<form name="sso" action="<?php echo $url;?>" method="post">

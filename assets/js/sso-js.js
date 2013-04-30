@@ -1,17 +1,23 @@
+
+
 jQuery(document).ready( function(){
 	
+	//Logout
 	if(document.getElementById('logout')) {
 		
 		jQuery('#logout').bind('click', function(event){
 			
 			event.preventDefault();
-			//var base = url_parts[0] + '//' + url_parts[2] + '/community/'; //Production
-    		var base = window.location.protocol + '//' + window.location.host + '/'; //Local Dev
-    		var plugin_path = 'wp-content/plugins/shc-sso-profile/public/';
-    		var url = base + plugin_path + 'login.php?sso_action=_logout';
+    		var url = window.sso_base + window.sso_plugin_path + 'login.php?sso_action=_logout';
     		
 			jQuery('<iframe src="' + url +'" frameborder="0" scrolling="no" id="sso-auth" style="display:hidden;"></iframe>').appendTo(document.body);
 		});
+	}
+	
+	//For Login and reg page - non-modal
+	if(document.getElementById("login") || document.getElementById('registration')) {
+		
+		login_reg_page();
 	}
 
 });
@@ -24,8 +30,11 @@ function sso_error(message, type='login') {
 	//remove iframe
 	jQuery('#sso-auth').remove();
 	
-	//Update modal -- login/register
-	shcJSL.get(window).moodle({width:480, method:'ajax', target:ajaxdata.ajaxurl, type:'POST', data:{action: 'get_template_ajax', template: template}})
+	//Update modal, if it is present -- login/register
+	if(document.getElementById('moodle_window')) {
+		
+		shcJSL.get(window).moodle({width:480, method:'ajax', target:ajaxdata.ajaxurl, type:'POST', data:{action: 'get_template_ajax', template: template}})
+	}
 	
 	//send error (message)
 	setTimeout( function() {
@@ -35,6 +44,37 @@ function sso_error(message, type='login') {
 			document.getElementById('sso-error').innerHTML = message;
 		}
 	}, 1000 );
+	
+}
+
+function login_reg_page() {
+	
+	var form = document.getElementById("login") || document.getElementById('registration');
+	
+	function sso_iframe() {
+		
+		jQuery('<iframe frameborder="0" scrolling="no" id="sso-auth" name="sso-auth" style="display:hidden;"></iframe>').appendTo(document.body);
+	}
+	
+	if (form) {
+		
+		$(form).on("valid", function(event, submit) {
+			
+			submit.preventDefault();
+			
+			var sso_action = 'login.php?sso_action=' + ((document.getElementById('login')) ? '_login' : '_register');
+			
+			sso_iframe();
+        	url = window.sso_base + window.sso_plugin_path + sso_action;
+        	
+        	form.action = url;
+        	form.target = 'sso-auth';
+        	form.method = 'POST';
+        	form.submit();
+    		
+		});
+		
+	}
 	
 }
 

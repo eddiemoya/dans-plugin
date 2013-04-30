@@ -221,6 +221,12 @@ class SSO_Auth_Request extends SSO_Base_Request {
  					exit;
  				}
  				
+ 				//If this is a new SSO registration, send to responsys
+ 				if(isset($_REQUEST['sso-registration'])) {
+ 					
+ 					SSO_Responsys_Request::factory($user->email, $user->user_id)->send();
+ 				}
+ 				
  				//Log user in (WP)
  				$user->login();
  				
