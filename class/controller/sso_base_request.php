@@ -283,11 +283,11 @@ class SSO_Base_Request {
 	                if ( ! is_numeric($key)) {
 	                	
 	                    $sub = $xml->addChild($key);
-	                  	$this->to_xml($value, $sub);
+	                  	$this->_to_xml($value, $sub);
 	                   
 	                } else {
 	                	
-	                    $this->to_xml($value, $xml);
+	                    $this->_to_xml($value, $xml);
 	                }
 	            }
 	            else
