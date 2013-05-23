@@ -23,7 +23,7 @@ jQuery(document).ready( function(){
 });
 
 
-function sso_error(message, type='login') {
+function sso_error(message, type) {
 	
 	var template = (type == 'login') ? 'page-login' : 'page-register';
 	
