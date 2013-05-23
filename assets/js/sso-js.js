@@ -10,7 +10,7 @@ jQuery(document).ready( function(){
 			event.preventDefault();
     		var url = window.sso_base + window.sso_plugin_path + 'login.php?sso_action=_logout';
     		
-			jQuery('<iframe src="' + url +'" frameborder="0" scrolling="no" id="sso-auth" style="display:hidden;"></iframe>').appendTo(document.body);
+			jQuery('<iframe src="' + url +'" frameborder="0" scrolling="no" id="sso-auth" style="display:none;"></iframe>').appendTo(document.body);
 		});
 	}
 	
@@ -53,7 +53,7 @@ function login_reg_page() {
 	
 	function sso_iframe() {
 		
-		jQuery('<iframe frameborder="0" scrolling="no" id="sso-auth" name="sso-auth" style="display:hidden;"></iframe>').appendTo(document.body);
+		jQuery('<iframe frameborder="0" scrolling="no" id="sso-auth" name="sso-auth" style="display:none;"></iframe>').appendTo(document.body);
 	}
 	
 	if (form) {

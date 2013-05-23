@@ -31,7 +31,7 @@ if ( ! defined('SHCSSO_VERSION'))
     define('SHCSSO_QUERYSTRING_PARAM', 'sso_action');
     
     //Public path and files
-    define('SHCSSO_PUBLIC_URL', WP_PLUGIN_URL . '/shc-sso-profile/public/');
+    define('SHCSSO_PUBLIC_URL', get_site_url(null, '/wp-content/plugins/shc-sso-profile/public/'));
 	define('SHCSSO_SERVICE_URL', SHCSSO_PUBLIC_URL . 'service.php');
 	define('SHCSSO_LOGIN_URL' , SHCSSO_PUBLIC_URL . 'login.php');
 	
