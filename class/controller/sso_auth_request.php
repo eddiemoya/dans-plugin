@@ -186,12 +186,12 @@ class SSO_Auth_Request extends SSO_Base_Request {
 			
 			if(isset($_POST['ticket'])) { //Validate ticket
 				
+				
 				$response = $this->_query('ticket', $_POST['ticket'])
-				 				->_query('service', SHCSSO_SERVICE_URL . '?' . SHCSSO_QUERYSTRING_PARAM . '=_validate' . ((isset($_REQUEST['openid'])) ? '&openid' : null) . ((isset($_REQUEST['sso-registration'])) ? '&sso-registration' : null))
+				 				->_query('service', SHCSSO_SERVICE_URL . '?' . SHCSSO_QUERYSTRING_PARAM . '=_validate' . ((isset($_REQUEST['openid'])) ? '&openid' : null) . ((isset($_REQUEST['sso-registration'])) ? '&sso-registration' : null) . (isset($_REQUEST['sso_check']) ? '&sso_check' : null))
 			 					->_url()
 				 				->_execute(true);
-
- 				
+				 				
  				//Use SSO_User
  				$user = SSO_User::factory($response);
  				
@@ -235,9 +235,17 @@ class SSO_Auth_Request extends SSO_Base_Request {
  					
 			} else { //No ticket, error time...
 				
-				SSO_Utils::view('error', array('msg' => 'A ticket was not received from CAS.',
+				if(isset($_REQUEST['sso_check'])) {
+					
+					SSO_Utils::view('close', array());
+					
+				} else {
+					
+					SSO_Utils::view('error', array('msg' => 'A ticket was not received from CAS.',
 												'close_OID'	=> $openid));
-				exit;
+					exit;
+				}
+				
 			}
 			
 		}
@@ -271,6 +279,25 @@ class SSO_Auth_Request extends SSO_Base_Request {
 										));
 		
 	}
+	
+	/**
+	 * Checks if user has a current SSO session
+	 * 
+	 * @access protected
+	 * @param void
+	 * @return void
+	 */
+	protected function _session_check() {
+		
+		$this->_query('service', SHCSSO_SERVICE_URL . '?' . SHCSSO_QUERYSTRING_PARAM . '=_validate&sso_check')
+			->_query('sourceSiteid', SSO_Utils::options('sso_site_id'))
+			->_query('gateway','true')
+			->_url();
+			
+			
+		SSO_Utils::view('redirect', array('url' => $this->url));
+	}
+	
 	
 	/**
 	 * Handles initiation of CAS logout.

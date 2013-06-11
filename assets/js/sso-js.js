@@ -19,6 +19,9 @@ jQuery(document).ready( function(){
 		
 		login_reg_page();
 	}
+	
+	//SSO cookie check
+	sso_check_init();
 
 });
 
@@ -78,11 +81,30 @@ function login_reg_page() {
 	
 }
 
+function sso_check_init() {
+	
+	var cookie_name = 'sso-checked';
+	
+	if(shcJSL.cookies(cookie_name).serve() != 'yes') {
+		
+		var url = window.sso_base + window.sso_plugin_path + 'login.php?sso_action=_session_check';
+		jQuery('<iframe frameborder="0" scrolling="no" id="sso-auth" name="sso-auth" src="' + url + '" style="display:none;"></iframe>').appendTo(document.body);
+		shcJSL.cookies(cookie_name).bake({value: 'yes'});
+	}
+	
+}
+
+
 /**
  * Reloads page after SSO login/register is complete
  */
 function sso_complete() {
 	
 	window.location.reload();
+}
+
+function sso_iframe_close() {
+	
+	jQuery('#sso-auth').remove(); 
 }
 
