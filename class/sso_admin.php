@@ -92,8 +92,8 @@ class SSO_Admin {
         add_settings_section(SHCSSO_OPTION_PREFIX . 'sso_settings', __('SSO Settings'), array(__CLASS__, 'sso_section'), 'shcsso-settings');
         add_settings_field('sso_site_id', __('Source Site ID'), array(__CLASS__, 'sso_site_id'), 'shcsso-settings', SHCSSO_OPTION_PREFIX . 'sso_settings');
         add_settings_field('sso_role', __('User Role'), array(__CLASS__, 'sso_role'), 'shcsso-settings', SHCSSO_OPTION_PREFIX . 'sso_settings');
-        add_settings_field('sso_login_page_uri', __('Login Page'), array(__CLASS__, 'sso_login_page_uri'), 'shcsso-settings', SHCSSO_OPTION_PREFIX . 'sso_settings');
-        add_settings_field('sso_reg_page_uri', __('Registration Page'), array(__CLASS__, 'sso_reg_page_uri'), 'shcsso-settings', SHCSSO_OPTION_PREFIX . 'sso_settings');
+        //add_settings_field('sso_login_page_uri', __('Login Page'), array(__CLASS__, 'sso_login_page_uri'), 'shcsso-settings', SHCSSO_OPTION_PREFIX . 'sso_settings');
+        //add_settings_field('sso_reg_page_uri', __('Registration Page'), array(__CLASS__, 'sso_reg_page_uri'), 'shcsso-settings', SHCSSO_OPTION_PREFIX . 'sso_settings');
 		
         //Profile Section
         add_settings_section(SHCSSO_OPTION_PREFIX . 'profile_settings', __('Profile Settings'), array(__CLASS__, 'profile_section'), 'shcsso-settings');
