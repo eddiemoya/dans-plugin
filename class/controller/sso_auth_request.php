@@ -273,7 +273,7 @@ class SSO_Auth_Request extends SSO_Base_Request {
 		SSO_Utils::view('register', array('url'				=> $this->url,
 										'logonPassword'		=> $_REQUEST['logonPassword'],
 										'loginId'			=> $_REQUEST['loginId'],
-										'zipcode'			=> $_REQUEST['zipcode'],
+										'zipcode'			=> SSO_Utils::truncate_zipcode($_REQUEST['zipcode']),
 										'service'			=> SHCSSO_SERVICE_URL . '?' . SHCSSO_QUERYSTRING_PARAM . '=_validate&sso-registration',
 										'sourceSiteid'		=> SSO_Utils::options('sso_site_id')
 										));

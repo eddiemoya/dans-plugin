@@ -400,9 +400,9 @@ class SSO_User {
 		if(! $this->_profile_data || isset($this->_profile_data['error']))
 			$this->_profile_data = SSO_Profile_Request::factory()->get($this->guid);
 			
-		if(! isset($this->_profile_data['error']) && ($this->zipcode != $this->_profile_data['zipcode'])) {
+		if(! isset($this->_profile_data['error']) && ($this->zipcode != SSO_Utils::truncate_zipcode($this->_profile_data['zipcode']))) {
 			
-			$this->zipcode = $this->_profile_data['zipcode'];
+			$this->zipcode = SSO_Utils::truncate_zipcode($this->_profile_data['zipcode']);
 			
 			//Get new city, state
 			$location = User_Location::factory()->get($this->zipcode)

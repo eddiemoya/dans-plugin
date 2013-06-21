@@ -231,6 +231,16 @@ class SSO_Utils {
 		
 	}*/
 	
+	public static function truncate_zipcode($zipcode) {
+		
+		if(strlen($zipcode) > 5) {
+		
+			return substr((string)$zipcode, 0, 5);
+		}
+	
+		return $zipcode;
+	}
+	
 	public static function load_openid_js() {
 		
 		echo "\t<script type='text/javascript'>\n\t\tvar OID = ". json_encode(array('token_url' => SHCSSO_SERVICE_URL . '?' . SHCSSO_QUERYSTRING_PARAM . '=_openid')) .";\n\t\tvar SSO_ENV = '" . self::options('environment') ."'; \n\t\t</script>\n";
