@@ -314,7 +314,7 @@ class SSO_User {
  		if(! isset($user_data['error'])) {
  			
  			$this->screen_name = $user_data['screenname'];
- 			$this->zipcode = $user_data['zipcode'];
+ 			$this->zipcode = SSO_Utils::truncate_zipcode($user_data['zipcode']);
  			
  			$this->_update_user_nicename($this->user_id, $this->screen_name);
  			
