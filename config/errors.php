@@ -72,7 +72,7 @@ return array(
     '500.660'    => "User not found",
     '500.670'    => "First-name and last-name is required",
     '500.680'    => "Relationship not found",
-    '500.690'    => "Phone type not found",$sso_errors = 
+    '500.690'    => "Phone type not found",
     '500.700'    => "Important date type not found",
     '500.710'    => "Invalid Important date",
     '500.720'    => "Address type not found",

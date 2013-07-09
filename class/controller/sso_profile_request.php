@@ -291,7 +291,6 @@ class SSO_Profile_Request extends SSO_Base_Request {
 						->_method('GET')
 						->_execute(true, 'xml', false);
 						
-					
 				
 				if(isset($user->code)) {
 					
@@ -442,6 +441,9 @@ class SSO_Profile_Request extends SSO_Base_Request {
             														)
             						)
         );
+        
+      var_dump($xml);
+        exit;
         
         //Convert array to XML
        $this->_to_xml($data, $xml);

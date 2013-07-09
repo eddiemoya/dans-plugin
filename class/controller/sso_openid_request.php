@@ -104,10 +104,10 @@ class SSO_Openid_Request extends SSO_Base_Request {
 			//Get user's CIS profile data
 			$profile = SSO_Profile_Request::factory()
 											->search($this->user['email']);
-											
-											
+
+								
 			if(isset($profile['code']) && $profile['code'] == '404') {
-					
+				
 				//User not found, create new SSO Profile user
 				$new_user = SSO_Profile_Request::factory()->create($this->user);
 				

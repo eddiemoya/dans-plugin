@@ -141,8 +141,18 @@ class SSO_Base_Request {
         	switch($format) {
         		
         		case 'xml':
-        		
-        				return $this->_xml_to_object($response, $cas);
+        			
+        			//If we get a HTTP 404
+        			if($code == '404') {
+        				
+        				$out = new stdClass();
+        				$out->code = '404';
+        				$out->error = 'Not found';
+        				
+        				return $out;
+        			} 
+        			
+        			return $this->_xml_to_object($response, $cas);
         				
         			break;
         				

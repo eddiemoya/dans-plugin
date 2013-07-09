@@ -149,8 +149,8 @@ class SSO_Auth_Request extends SSO_Base_Request {
 				 		 ->_query('sig', $profile->digital_signature)
 				 		 ->_method('POST')
 				 		 ->_url(false)
-				 		 ->_execute(false);
-				 		 
+				 		 ->_execute(false);	
+
 				 		
 			//Response must be echoed
 	 		 echo $cas;
