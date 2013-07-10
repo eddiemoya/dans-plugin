@@ -191,12 +191,13 @@ class SSO_Auth_Request extends SSO_Base_Request {
 				 				->_query('service', SHCSSO_SERVICE_URL . '?' . SHCSSO_QUERYSTRING_PARAM . '=_validate' . ((isset($_REQUEST['openid'])) ? '&openid' : null) . ((isset($_REQUEST['sso-registration'])) ? '&sso-registration' : null) . (isset($_REQUEST['sso_check']) ? '&sso_check' : null))
 			 					->_url()
 				 				->_execute(true);
-				echo '<pre>';			
- 				var_dump($response);
- 				exit;
-				 				
+				
  				//Use SSO_User
  				$user = SSO_User::factory($response);
+ 				
+ 				echo '<pre>';
+ 				var_dump($user);
+ 				exit;
  				
  				//If not a new user, check for location and screen name updates...
  				if(! $user->is_new) {
