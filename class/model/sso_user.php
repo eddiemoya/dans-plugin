@@ -95,6 +95,12 @@ class SSO_User {
 	 */
 	public $created = false;
 	
+	/**
+	 * Contains any errors from creation of new user
+	 * @var mixed
+	 */
+	public $error;
+	
 	
 	
 	/**
@@ -302,6 +308,7 @@ class SSO_User {
  		if(is_wp_error($user_id)) {
  			
  			$this->created = false;
+ 			$this->error = $user_id;
  			return false;
  		}
  		
