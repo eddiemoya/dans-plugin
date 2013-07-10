@@ -97,7 +97,7 @@ class SSO_Openid_Request extends SSO_Base_Request {
 								->_url()
 								->_execute(true, 'json');
 							
-
+			
 			//Set $user property with data from response
 			$this->_user($response);
 			
@@ -105,7 +105,14 @@ class SSO_Openid_Request extends SSO_Base_Request {
 			$profile = SSO_Profile_Request::factory()
 											->search($this->user['email']);
 
-								
+			if(isset($profile['code']) && $profile['code'] == '') {
+				
+				SSO_Utils::view('error', array('msg'		=> 'CAS did not respond to request.',
+												'close_OID'	=> true));
+				exit;
+				
+			}
+				
 			if(isset($profile['code']) && $profile['code'] == '404') {
 				
 				//User not found, create new SSO Profile user

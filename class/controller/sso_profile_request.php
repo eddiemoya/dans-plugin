@@ -140,8 +140,7 @@ class SSO_Profile_Request extends SSO_Base_Request {
 				
 			} catch (Exception $e) {
 				
-				var_dump($e);
-				exit;
+				
 				return array('error' => 'An issue occured trying to retrieve data from CIS.');
 			}
 			
@@ -272,7 +271,7 @@ class SSO_Profile_Request extends SSO_Base_Request {
 					return array('code' => '200', 'message' => 'Your password has been successfully changed.');
 	} 
 	
-/**
+	/**
 	 * Given an e-mail searches for user's profile data.
 	 * 
 	 * @param string $email
@@ -442,13 +441,9 @@ class SSO_Profile_Request extends SSO_Base_Request {
             						)
         );
         
-      var_dump($xml);
-        exit;
-        
         //Convert array to XML
        $this->_to_xml($data, $xml);
-        
-	      
+       
        $output = $this->_query('sid', $this->_sid)
 						->_query('ts', $this->timestamp)
 						->_query('sig', $this->digital_signature)
@@ -459,7 +454,7 @@ class SSO_Profile_Request extends SSO_Base_Request {
 						->_method('PUT')
 						->_execute(true, 'xml', false);
 						
-		
+						
 		return $output;
 	}
 	
