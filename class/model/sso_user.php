@@ -260,7 +260,7 @@ class SSO_User {
 							  		'screen_name'	=> $this->screen_name,
 							  		'city'			=> $this->city,
 							  		'state'			=> $this->state,
-							  		'zipcode'		=> $this->zipcode));
+							  		'zipcode'		=> (trim($this->zipcode) == '') ? 0 : $this->zipcode));
 			
 		} else {
 			
@@ -270,7 +270,7 @@ class SSO_User {
 								array('screen_name'	=> $this->screen_name,
 										'city'		=> $this->city,
 										'state'		=> $this->state,
-										'zipcode'	=> $this->zipcode
+										'zipcode'	=> (trim($this->zipcode) == '') ? 0 : $this->zipcode
 										),
 								array('id' => $this->id));
 							
@@ -309,11 +309,6 @@ class SSO_User {
  		
  		//Get screen name / update screen name
  		$user_data = SSO_Profile_Request::factory()->get($this->guid);
- 		
- 		echo '<pre>';
- 		var_dump($user_data);
- 		exit;
- 		
  		
  		if(! isset($user_data['error'])) {
  			

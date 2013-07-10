@@ -203,12 +203,12 @@ class SSO_Auth_Request extends SSO_Base_Request {
  				}
  				
  				//if there was problem creating new user...
- 				/*if($user->is_new && ! $user->created) {
+ 				if($user->is_new && ! $user->created) {
  					
  					SSO_Utils::view('error', array('msg' => 'There was an issue creating new user.',
  													'close_OID'	=> $openid));
  					exit;
- 				}*/
+ 				}
  				
  				//Save data
  				$user->save();
