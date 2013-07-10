@@ -310,6 +310,10 @@ class SSO_User {
  		//Get screen name / update screen name
  		$user_data = SSO_Profile_Request::factory()->get($this->guid);
  		
+ 		echo '<pre>';
+ 		var_dump($user_data);
+ 		exit;
+ 		
  		
  		if(! isset($user_data['error'])) {
  			

@@ -194,11 +194,7 @@ class SSO_Auth_Request extends SSO_Base_Request {
 				
  				//Use SSO_User
  				$user = SSO_User::factory($response);
- 				
- 				echo '<pre>';
- 				var_dump($user);
- 				exit;
- 				
+ 					
  				//If not a new user, check for location and screen name updates...
  				if(! $user->is_new) {
  					
