@@ -18,6 +18,7 @@ jQuery(document).ready( function(){
 	if(document.getElementById("login") || document.getElementById('registration')) {
 		
 		login_reg_page();
+		
 	}
 	
 	//SSO cookie check
