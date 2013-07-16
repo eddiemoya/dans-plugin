@@ -83,7 +83,6 @@ class SSO_Base_Request {
 	 */
 	protected function _execute($object=false, $format='xml', $cas=true) {
 		
-		
 		$options = array(CURLOPT_URL            => $this->url,
 			            CURLOPT_RETURNTRANSFER  => TRUE,
 			            CURLOPT_HEADER          => FALSE,
@@ -122,17 +121,8 @@ class SSO_Base_Request {
         // Get the response information
         $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         
-     
-        if ( ! $response) {
-            $error = curl_error($ch);
-        }
 
         curl_close($ch);
-        
-         if (isset($error)) {
-         	
-            throw new Exception('Error fetching remote '.$url.' [ status '.$code.' ] '.$error);
-        }
 
  
 		//Return response		
@@ -150,7 +140,15 @@ class SSO_Base_Request {
         				$out->error = 'Not found';
         				
         				return $out;
-        			} 
+        			}
+
+        			//If we get HTTP 200 with blank response --
+        			//This is necessary because screen name validate returns 200 w/ 
+        			//blank response if it is OK, otherwise it returns XML.
+        			if($code == '200' && ! $response) {
+        				
+        				return null;
+        			}
         			
         			return $this->_xml_to_object($response, $cas);
         				

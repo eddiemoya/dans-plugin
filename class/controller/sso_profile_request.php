@@ -70,19 +70,6 @@ class SSO_Profile_Request extends SSO_Base_Request {
 	 */
 	protected $_reset_pwd_page;
 	
-	/**
-	 * Contains permalink to default login page.
-	 *  @var string
-	 */
-	protected $_login_page;
-	
-	/**
-	 * Contains permalink to default register page.
-	 * @var unknown_type
-	 */
-	protected $_register_page;
-	
-	
 	
 	public function __construct() {
 		
@@ -92,8 +79,6 @@ class SSO_Profile_Request extends SSO_Base_Request {
 		$options = SSO_Utils::options();
 		
 		$this->_reset_pwd_page = $options['profile_pwd_reset_page'];
-		$this->_login_page = $options['sso_login_page_uri'];
-		$this->_register_page = $options['sso_reg_page_uri'];
 		$this->_sid = $options['profile_site_id'];
 		$this->_key = $options['profile_key'];
 		
@@ -361,7 +346,7 @@ class SSO_Profile_Request extends SSO_Base_Request {
 		 $xml = new SimpleXMLElement($postdata);
 		 
 		 $data = array(
-            'id'        => (int) $sso_guid,
+            'id'        => (string) $sso_guid,
             'status'    => (isset($user['status'])) ? $user['status'] : 'active',
             'name'      => array(
                 'first'     => (isset($user['first_name'])) ? $user['first_name'] : NULL,
