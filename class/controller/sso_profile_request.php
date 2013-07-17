@@ -191,7 +191,7 @@ class SSO_Profile_Request extends SSO_Base_Request {
 					->_query('ts', $this->timestamp)
 					->_query('sig', $this->digital_signature)
 					->_query('logon', urlencode($email))
-					->_query('url', urlencode($this->_reset_pwd_page))
+					->_query('url', urlencode(get_permalink($this->_reset_pwd_page)))
 					->_set_action(__METHOD__)
 					->_url(false)
 					->_method('POST')
@@ -235,7 +235,7 @@ class SSO_Profile_Request extends SSO_Base_Request {
 							->_query('ts', $this->timestamp)
 							->_query('sig', $this->digital_signature)
 							->_post(array('pd' => $new_pwd, 'auth' => $auth_token))
-							->_action(__METHOD__)
+							->_set_action(__METHOD__)
 							->_url(false)
 							->_method('POST')
 							->_execute(true, 'xml', false);
