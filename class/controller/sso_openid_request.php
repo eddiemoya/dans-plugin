@@ -41,7 +41,6 @@ class SSO_Openid_Request extends SSO_Base_Request {
 	private $_api_key = 'cb097f9ddff64676d5017df4c335d740ae7e9915';
 	
 	
-	//_environment is set here
 	/**
 	 * Array of user data from OID response
 	 * @var array
