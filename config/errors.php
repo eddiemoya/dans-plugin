@@ -3,7 +3,7 @@
 return array(
     '401'        => "Unauthorized Request",
     '404'        => "Resource Not Found",
-    '500'        => "System Error",
+    '500'        => "Ooops! Looks like we are having some technical issues. Please check back in a few minutes and try again.",//"System Error",
     '500.10'     => "multiple users found",
     '500.110'    => "Your email address is already associated with an account from one of our many websites (Sears.com, Kmart.com, Craftsman.com, Kenmore.com or Mygofer.com). Your existing account and password are valid for all of our sites. If you can\'t remember your password, click \"Forgot Password\".",
     '500.111'    => "user in reset password state",
