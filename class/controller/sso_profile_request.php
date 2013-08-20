@@ -317,9 +317,9 @@ class SSO_Profile_Request extends SSO_Base_Request {
 						->_execute(true, 'xml', false);
 					
 		
-			if($validate) {
+			if($validate && $validate->code != '404') {
 					
-				return array('code' => $validate->code, 'message' => SSO_Utils::config('errors', $validate->code));
+				return array('code' => $validate->code, 'message' => SSO_Utils::config('errors', (string)$validate->code));
 				
 			} else {
 				
