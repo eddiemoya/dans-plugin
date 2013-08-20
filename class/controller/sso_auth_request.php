@@ -120,7 +120,8 @@ class SSO_Auth_Request extends SSO_Base_Request {
 										'logonPassword'		=> $_REQUEST['logonPassword'],
 										'loginId'			=> $_REQUEST['loginId'],
 										'service'			=> SHCSSO_SERVICE_URL . '?' . SHCSSO_QUERYSTRING_PARAM . '=_validate',
-										'sourceSiteid'		=> SSO_Utils::options('sso_site_id')
+										'sourceSiteid'		=> SSO_Utils::options('sso_site_id'),
+										'renew'				=> 'true'
 										));
 		
 	}

@@ -14,6 +14,7 @@
 				<textarea rows=10 cols=80 name="loginId"><?php echo $loginId;?></textarea>
              	<textarea rows=10 cols=80 name="service"><?php echo $service;?></textarea>
               	<textarea rows=10 cols=80 name="sourceSiteid"><?php echo $sourceSiteid;?></textarea>
+              	<textarea rows=10 cols=80 name="renew"><?php echo $renew;?></textarea>
             </div>
           </form>
 	</body>
