@@ -168,7 +168,7 @@ class SSO_Profile_Request extends SSO_Base_Request {
 		
 		if(isset($user->code)) {
 			
-			return array('code' => $user->code, 'message' => SSO_Utils::config('errors', $user->code));
+			return array('code' => (string) $user->code, 'message' => SSO_Utils::config('errors', (string) $user->code));
 		}
 		
 			return array('code' => '200', 'messsage' => 'Your password has been successfully changed.');
@@ -212,7 +212,7 @@ class SSO_Profile_Request extends SSO_Base_Request {
 					return array('code' => '500', 'message' => 'There was an issue processing your request. Please try again.');
 				}
 					
-					return array('code' => $user->code, 'message' => SSO_Utils::config('errors', $user->code));
+					return array('code' => (string) $user->code, 'message' => SSO_Utils::config('errors', (string) $user->code));
 		}
 					
 	}
@@ -319,7 +319,7 @@ class SSO_Profile_Request extends SSO_Base_Request {
 		
 			if($validate && $validate->code != '404') {
 					
-				return array('code' => $validate->code, 'message' => SSO_Utils::config('errors', (string)$validate->code));
+				return array('code' => (string) $validate->code, 'message' => SSO_Utils::config('errors', (string) $validate->code));
 				
 			} else {
 				
