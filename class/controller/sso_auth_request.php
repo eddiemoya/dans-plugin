@@ -144,7 +144,7 @@ class SSO_Auth_Request extends SSO_Base_Request {
 			$cas = $this->_query('loginId', $user['email'])
 						 ->_query('ts', $profile->timestamp)
 				 		 ->_query('sourceSiteId', SSO_Utils::options('sso_site_id'))
-				 		 ->_query('renew', 'false')
+				 		 ->_query('renew', 'true')
 				 		 ->_query('gateway', 'true')
 				 		 ->_query('service', urlencode(SHCSSO_SERVICE_URL . '?' . SHCSSO_QUERYSTRING_PARAM . '=_validate&openid'))
 				 		 ->_query('sig', $profile->digital_signature)
