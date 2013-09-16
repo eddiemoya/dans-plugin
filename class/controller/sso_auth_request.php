@@ -276,7 +276,8 @@ class SSO_Auth_Request extends SSO_Base_Request {
 										'loginId'			=> $_REQUEST['loginId'],
 										'zipcode'			=> SSO_Utils::truncate_zipcode($_REQUEST['zipcode']),
 										'service'			=> SHCSSO_SERVICE_URL . '?' . SHCSSO_QUERYSTRING_PARAM . '=_validate&sso-registration',
-										'sourceSiteid'		=> SSO_Utils::options('sso_site_id')
+										'sourceSiteid'		=> SSO_Utils::options('sso_site_id'),
+										'renew'				=> 'true'
 										));
 		
 	}
