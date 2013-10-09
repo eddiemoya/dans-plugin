@@ -319,10 +319,18 @@ class SSO_User {
  		
  		if(! isset($user_data['error'])) {
  			
- 			$this->screen_name = $user_data['screenname'];
+ 			$this->screen_name = trim($user_data['screenname']);
  			$this->zipcode = SSO_Utils::truncate_zipcode($user_data['zipcode']);
  			
- 			$this->_update_user_nicename($this->user_id, $this->screen_name);
+ 			if($this->screen_name == '') { //Screen name not set, use first part of email as nicename
+ 				
+ 				$parts = explode('@', $this->email);
+ 				$this->_update_user_nicename($this->user_id, $parts[0]);
+ 				
+ 			} else {
+ 				
+ 				$this->_update_user_nicename($this->user_id, $this->screen_name);
+ 			}
  			
  			//Get Location/ update location
 			$location = User_Location::factory()->get($this->zipcode)
@@ -373,6 +381,22 @@ class SSO_User {
 						
 		return ($update) ? true : false;
 	}
+	
+	
+	/**
+	 * Updates user's nicename field in wp_users table. Public version
+	 * of _update_user_nicename()
+	 * 
+	 * @uses _update_user_nicename()
+	 * @access public
+	 * @param string $name - nicename to set
+	 * @return bool - true on success, false on fail.
+	 */
+	public function user_nicename($name) {
+		
+		return $this->_update_user_nicename($this->user_id, $name);
+	}
+	
 	
 	/**
 	 * Checks if user's CIS profile screen name matches what we have locally. If not,
