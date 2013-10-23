@@ -14,6 +14,18 @@ jQuery(document).ready( function(){
 		});
 	}
 	
+	//Login/Register link onclick
+	if(document.getElementById('login-link') && document.getElementById('registration-link')) {
+		
+		jQuery('#login-link').bind('click', function(event){
+			
+			event.preventDefault();
+			openUSRModal('http://localhost:5007', 'LOGIN', 'Header', false, '', '', 'https://sso.shld.net:443', 41);
+			
+		});
+	}
+	
+	
 	//For Login and reg page - non-modal
 	if(document.getElementById("login") || document.getElementById('registration')) {
 		

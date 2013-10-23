@@ -250,6 +250,9 @@ class SSO_Utils {
 		
 		wp_register_script('sso-js', plugins_url('assets/js/', dirname(__FILE__)) . 'sso-js.js', array('jquery', 'shcJSL', 'moodle'), '1.0');
 		wp_enqueue_script('sso-js');
+		
+		wp_register_script('usr', 'https://sso.shld.net/usr/PROD/universalSignInCombined.js', array('sso-js'), '1.0');
+		wp_enqueue_script('usr');
 	}
 	
 	public static function install() {
