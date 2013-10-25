@@ -89,7 +89,7 @@ function sso_check_init() {
 	if(shcJSL.cookies(cookie_name).serve() != 'yes') {
 		
 		var url = window.sso_base + window.sso_plugin_path + 'login.php?sso_action=_session_check';
-		jQuery('<iframe frameborder="0" scrolling="no" id="sso-auth" name="sso-auth" src="' + url + '" style="display:none;"></iframe>').appendTo(document.body);
+		jQuery('<iframe src="' + url + '" frameborder="0" scrolling="no" id="sso-auth" style="display:none;"></iframe>').appendTo(document.body);
 		shcJSL.cookies(cookie_name).bake({value: 'yes'});
 	}
 	
