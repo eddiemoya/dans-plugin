@@ -201,14 +201,6 @@ class SSO_Auth_Request extends SSO_Base_Request {
  					
  					$user->update_screen_name();
  					$user->update_location();
- 					
- 					//This is necessary due to author link redirect issue.
- 					if($user->screen_name == '' || ! $user->screen_name) { //If user does not have a screen name, use first part of email
- 						
- 						$parts = explode('@', $user->email);
- 						$user->user_nicename($parts[0]);
- 						
- 					}
  				}
  				
  				//if there was problem creating new user...
