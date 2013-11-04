@@ -52,6 +52,13 @@ class SSO_Base_Request {
 	protected $_post;
 	
 	/**
+	 * HTTP response code returned from cURL.
+	 * 
+	 * @var int
+	 */
+	protected $_http_code;
+	
+	/**
 	 * Full URL for request.
 	 * 
 	 * @var string
@@ -87,6 +94,7 @@ class SSO_Base_Request {
 			            CURLOPT_RETURNTRANSFER  => TRUE,
 			            CURLOPT_HEADER          => FALSE,
 			            CURLOPT_SSL_VERIFYHOST  => 0,
+			            CURLOPT_FOLLOWLOCATION	=> TRUE,
 			            CURLOPT_SSL_VERIFYPEER  => 0,
 			            CURLOPT_USERAGENT       => $_SERVER['HTTP_USER_AGENT'],
 	        			CURLOPT_CUSTOMREQUEST	=> $this->_method);
@@ -119,7 +127,7 @@ class SSO_Base_Request {
         
       
         // Get the response information
-        $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $this->_http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         
 
         curl_close($ch);

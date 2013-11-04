@@ -189,7 +189,7 @@ class SSO_Auth_Request extends SSO_Base_Request {
 				
 				
 				$response = $this->_query('ticket', $_POST['ticket'])
-				 				->_query('service', SHCSSO_SERVICE_URL . '?' . SHCSSO_QUERYSTRING_PARAM . '=_validate' . ((isset($_REQUEST['openid'])) ? '&openid' : null) . ((isset($_REQUEST['sso-registration'])) ? '&sso-registration' : null) . (isset($_REQUEST['sso_check']) ? '&sso_check' : null))
+				 				->_query('service', SHCSSO_SERVICE_URL . '?' . SHCSSO_QUERYSTRING_PARAM . '=_validate' . ((isset($_REQUEST['openid'])) ? '&openid' : null) . ((isset($_REQUEST['sso-registration'])) ? '&sso-registration' : null) . (isset($_REQUEST['sso_check']) ? '&sso_check' : null) . (isset($_REQUEST['email_opt']) ? '&email_opt' : null))
 			 					->_url()
 				 				->_execute(true);
 				
@@ -230,10 +230,17 @@ class SSO_Auth_Request extends SSO_Base_Request {
  					exit;
  				}
  				
- 				//If this is a new SSO registration, send to responsys
+ 				//If this is a new SSO registration, send to responsys & Epsilon (e-mail opt-in)
  				if(isset($_REQUEST['sso-registration'])) {
  					
+ 					//Responsys
  					SSO_Responsys_Request::factory($user->email, $user->user_id)->send();
+ 					
+ 					//Epsilon - Opt-in for promo emails
+ 					if(isset($_REQUEST['email_opt'])) {
+ 						
+ 						SSO_Epsilon_Request::factory()->opt_in($user->email);
+ 					}
  				}
  				
  				//Log user in (WP)
@@ -278,12 +285,11 @@ class SSO_Auth_Request extends SSO_Base_Request {
 		
 		$this->_url();
 		
-		
 		SSO_Utils::view('register', array('url'				=> $this->url,
 										'logonPassword'		=> $_REQUEST['logonPassword'],
 										'loginId'			=> $_REQUEST['loginId'],
 										'zipcode'			=> SSO_Utils::truncate_zipcode($_REQUEST['zipcode']),
-										'service'			=> SHCSSO_SERVICE_URL . '?' . SHCSSO_QUERYSTRING_PARAM . '=_validate&sso-registration',
+										'service'			=> SHCSSO_SERVICE_URL . '?' . SHCSSO_QUERYSTRING_PARAM . '=_validate&sso-registration' . ((isset($_REQUEST['offers'])) ? '&email_opt' : null),
 										'sourceSiteid'		=> SSO_Utils::options('sso_site_id'),
 										'renew'				=> 'true'
 										));
