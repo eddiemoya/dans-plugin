@@ -34,11 +34,11 @@ class SSO_Responsys_Request extends SSO_Base_Request {
 		
 		if($site == 'MS') { //Sears
 			
-			$this->_endpoint = "https://sears.rsys4.net/servlet/campaignrespondent?_ID_=g34ri4.872&EMAIL_ADDRESS={$this->_email}&SCREEN_NAME={$this->_username}&SID_CODE=ITx20120921TriggeredSRSMCWelcome&LAUNCH_DATE=2012-09-21&OPT_TYPE_CODE=MS&USERID={$this->_user_id}";
+			$this->_endpoint = "https://value.sears.com/pub/rf?_ri_=X0Gzc2X%3DWQpglLjHJlTQGo2trMyHvzcdfAizdCOgaza4CJ1PldMVwjpnpgHlpgneHmgJoXX0Gzc2X%3DWQpglLjHJlTQGhE2WmfvtPtzfCzgd2MuuWFLcuamIG&EMAIL_ADDRESS_={$this->_email}&SCREEN_NAME={$this->_username}&SID_CODE=ITx20120921TriggeredSRSMCWelcome&LAUNCH_DATE=2012-09-21&OPT_TYPE_CODE=MS&USERID={$this->_user_id}";
 			
 		} else { //Kmart
 			
-			$this->_endpoint = "https://kmart.rsys4.net/servlet/campaignrespondent?_ID_=kmart.3611&EMAIL_ADDRESS={$this->_email}&SCREEN_NAME={$this->_username}&SID_CODE=ITx20120921TriggeredMKwelcome&LAUNCH_DATE=2012-09-21&OPT_TYPE_CODE=MK&USERID={$this->_user_id}";
+			$this->_endpoint = "https://kmart.rsys2.net/pub/rf?_ri_= X0Gzc2X%3DWQpglLjHJlTQGrO29WN3s0tgTzb4ADPryLRJzduOVwjpnpgHlpgneHmgJoXX0Gzc2X%3DWQpglLjHJlTQGNJaaXyBOGyYoJeUczdzbyNYBkMn&EMAIL_ADDRESS={$this->_email}&SCREEN_NAME={$this->_username}&SID_CODE=ITx20120921TriggeredMKwelcome&LAUNCH_DATE=2012-09-21&OPT_TYPE_CODE=MK&USERID={$this->_user_id}";
 		}
 	}
 	
@@ -46,4 +46,5 @@ class SSO_Responsys_Request extends SSO_Base_Request {
 		
 		$this->_execute(false);
 	}
+
 }
