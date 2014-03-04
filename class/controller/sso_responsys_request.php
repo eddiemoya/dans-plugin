@@ -7,7 +7,7 @@ class SSO_Responsys_Request extends SSO_Base_Request {
 	
 	protected $_username;
 
-	protected $_side_code_date;
+	protected $_sid_code_date;
 
 	protected $_launch_date
 
