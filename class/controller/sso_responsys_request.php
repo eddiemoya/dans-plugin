@@ -34,7 +34,7 @@ class SSO_Responsys_Request extends SSO_Base_Request {
 	}
 	
 	protected function set_dates(){
-		$this->_side_code_date = date('Y-m-d');
+		$this->_sid_code_date = date('Y-m-d');
 		$this->_launch_date = date('Ymd');
 	}
 	protected function _endpoint() {
